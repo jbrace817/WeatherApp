@@ -1,3 +1,4 @@
+import { GeoLocation, WeatherAPI } from './weatherApi';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -82,7 +83,7 @@ currentWeatherTemplate.innerHTML = `
 />
 <p class="medium">Now</p>
 <div class="currentTemp">
-  <p class="large">37&deg;F</p>
+  <p class="large"><span id="temp"></span>&deg;F</p>
   
 </div>
 
@@ -93,11 +94,27 @@ currentWeatherTemplate.innerHTML = `
 </div>
 </div>`;
 
+const todaysWeather = new WeatherAPI();
+
 class CurrentConditions extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(currentWeatherTemplate.content.cloneNode(true));
+  }
+
+  async render() {
+    let currentTemp = this.shadowRoot.getElementById('temp');
+    console.log(currentTemp);
+    todaysWeather
+      .queryCurrentConditions(await GeoLocation.latLong())
+      .then((data) => {
+        console.log(data);
+        currentTemp.textContent = Math.round(data.current.temp_f);
+      });
+  }
+  connectedCallback() {
+    this.render();
   }
 }
 
