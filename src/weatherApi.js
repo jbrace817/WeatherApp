@@ -15,30 +15,19 @@ class GeoLocation {
   }
 }
 
-// Example usage:
-async function getLocation() {
-  try {
-    const position = await GeoLocation.getCurrentPosition();
-    console.log(position);
-    return position;
-    // Do something with position.latitude and position.longitude
-  } catch (error) {
-    console.error('Error getting geolocation:', error.message);
-  }
-}
-
 class WeatherAPI {
   constructor() {
     this.url = 'http://api.weatherapi.com/v1/';
     this.APIKEY = '2781e0322a6547ef98a113813241901';
   }
 
-  async currentWeatherbyPos(query) {
+  async currentWeatherbyPos() {
     try {
       const position = await GeoLocation.getCurrentPosition();
 
       const response = await fetch(
-        this.url + `current.json?key=${this.APIKEY}&q=${query} &aqi=no`,
+        this.url +
+          `current.json?key=${this.APIKEY}&q=${position.latitude},${position.longitude} &aqi=no`,
         { mode: 'cors' },
       );
       let data = await response.json();
@@ -50,12 +39,5 @@ class WeatherAPI {
     }
   }
 }
-
-// const weatherOnLocation = new WeatherAPI();
-// GeoLocation.getCurrentPosition();
-
-// weatherOnLocation.currentWeatherbyPos('18914').then((data) => {
-//   console.log(data.current);
-// });
 
 export { WeatherAPI, GeoLocation };
