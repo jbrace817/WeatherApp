@@ -56,7 +56,9 @@ currentWeatherTemplate.innerHTML = `
     margin-top: clamp(1rem, 0.08016rem + 3.873vw, 9.375rem);
     /* margin-left	380	16	PX	3840	316	PX */
     margin-left: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem);
+    /*image	380	210	PX	3840	650	PX*/
     width: clamp(13.125rem, 10.10471rem + 12.717vw, 40.625rem);
+    
   }
   
   .currentTemp {
@@ -83,16 +85,20 @@ currentWeatherTemplate.innerHTML = `
 />
 <p class="medium">Now</p>
 <div class="currentTemp">
-  <p class="large"><span id="temp"></span>&deg;F</p>
-  
+  <p class="large" temp=""></p>
+  <img id="imgNow" src="" alt=""/>
 </div>
 
 <div class="currentConditions">
-  <p class="medium">Mist</p>
-  <p class="small">Feels like: 35&deg;F</p>
-  <p class="small">Wind: 8 mph</p>
+  <p class="medium" text="">Mist</p>
+  <p class="small">Feels like: <span feelsLike=""></span></p>
+  <p class="small">Wind: <span wind=""></span></p>
 </div>
 </div>`;
+
+{
+  /* <span id="temp"></span> */
+}
 
 const todaysWeather = new WeatherAPI();
 
@@ -104,13 +110,34 @@ class CurrentConditions extends HTMLElement {
   }
 
   async render() {
-    let currentTemp = this.shadowRoot.getElementById('temp');
+    // let currentTemp = this.shadowRoot.getElementById('temp');
+    let currentTemp = this.shadowRoot.querySelector('[temp]');
+    let weatherText = this.shadowRoot.querySelector('[text]');
+    let feelsLike = this.shadowRoot.querySelector('[feelsLike]');
+    let wind = this.shadowRoot.querySelector('[wind]');
+    let imgNow = this.shadowRoot.getElementById('imgNow');
+
+    const imperial = '&deg;F';
+    const metric = '&deg;C';
+    const mph = 'mph';
+    const kph = 'kph';
     console.log(currentTemp);
     todaysWeather
       .queryCurrentConditions(await GeoLocation.latLong())
       .then((data) => {
-        console.log(data);
-        currentTemp.textContent = Math.round(data.current.temp_f);
+        // console.log(data);
+        currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
+        currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
+        imgNow.setAttribute('src', data.current.condition.icon);
+        weatherText.setAttribute('text', data.current.condition.text);
+        weatherText.textContent = `${weatherText.getAttribute('text')}`;
+        feelsLike.setAttribute(
+          'feelsLike',
+          Math.round(data.current.feelslike_f),
+        );
+        feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
+        wind.setAttribute('wind', Math.round(data.current.wind_mph));
+        wind.innerHTML = `${wind.getAttribute('wind')} ${mph}`;
       });
   }
   connectedCallback() {

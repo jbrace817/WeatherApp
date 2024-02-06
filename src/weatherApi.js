@@ -54,6 +54,9 @@ class WeatherAPI {
     try {
       const response = await fetch(
         this.url + `current.json?key=${this.APIKEY}&q=${query} &aqi=no`,
+
+        // this.url +
+        //   `forecast.json?key=${this.APIKEY}&q=${query}&days=3&aqi=no&alerts=no`,
         { mode: 'cors' },
       );
       let data = await response.json();
