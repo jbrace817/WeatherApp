@@ -122,23 +122,18 @@ class CurrentConditions extends HTMLElement {
     const mph = 'mph';
     const kph = 'kph';
     console.log(currentTemp);
-    todaysWeather
-      .queryCurrentConditions(await GeoLocation.latLong())
-      .then((data) => {
-        // console.log(data);
-        currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
-        currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-        imgNow.setAttribute('src', data.current.condition.icon);
-        weatherText.setAttribute('text', data.current.condition.text);
-        weatherText.textContent = `${weatherText.getAttribute('text')}`;
-        feelsLike.setAttribute(
-          'feelsLike',
-          Math.round(data.current.feelslike_f),
-        );
-        feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
-        wind.setAttribute('wind', Math.round(data.current.wind_mph));
-        wind.innerHTML = `${wind.getAttribute('wind')} ${mph}`;
-      });
+    todaysWeather.current(await GeoLocation.latLong()).then((data) => {
+      console.log(data);
+      currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
+      currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
+      imgNow.setAttribute('src', data.current.condition.icon);
+      weatherText.setAttribute('text', data.current.condition.text);
+      weatherText.textContent = `${weatherText.getAttribute('text')}`;
+      feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
+      feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
+      wind.setAttribute('wind', Math.round(data.current.wind_mph));
+      wind.innerHTML = `${wind.getAttribute('wind')} ${mph}`;
+    });
   }
   connectedCallback() {
     this.render();

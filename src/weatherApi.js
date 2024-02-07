@@ -50,10 +50,19 @@ class WeatherAPI {
   //     }
   //   }
 
-  async queryCurrentConditions(query) {
+  async current(query) {
+    const call = `current.json?key=${this.APIKEY}&q=${query} &aqi=no`;
+    return await this.queryCurrentConditions(call);
+  }
+  async forcast(query) {
+    const call = `forecast.json?key=${this.APIKEY}&q=${query}&days=3&aqi=no&alerts=no`;
+    return await this.queryCurrentConditions(call);
+  }
+
+  async queryCurrentConditions(apiCall) {
     try {
       const response = await fetch(
-        this.url + `current.json?key=${this.APIKEY}&q=${query} &aqi=no`,
+        this.url + apiCall,
 
         // this.url +
         //   `forecast.json?key=${this.APIKEY}&q=${query}&days=3&aqi=no&alerts=no`,
