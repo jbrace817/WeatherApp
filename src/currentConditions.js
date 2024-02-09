@@ -170,7 +170,7 @@ class CurrentConditions extends HTMLElement {
     this.shadowRoot.appendChild(currentWeatherTemplate.content.cloneNode(true));
   }
 
-  async render() {
+  async render(location = GeoLocation.latLong()) {
     // let currentTemp = this.shadowRoot.getElementById('temp');
     let currentTemp = this.shadowRoot.querySelector('[temp]');
     let weatherText = this.shadowRoot.querySelector('[text]');
@@ -187,7 +187,7 @@ class CurrentConditions extends HTMLElement {
     console.log(currentTemp);
     dataContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
-    todaysWeather.current(await GeoLocation.latLong()).then((data) => {
+    todaysWeather.current(await location).then((data) => {
       console.log(data);
       loaderContainer.style.display = 'none';
       dataContainer.style.display = 'block';
@@ -203,8 +203,26 @@ class CurrentConditions extends HTMLElement {
       wind.innerHTML = `${wind.getAttribute('wind')} ${mph}`;
     });
   }
+
+  async locationLookup() {
+    const locationInput = this.shadowRoot.getElementById('search-location');
+    let l = '';
+    locationInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && locationInput.value) {
+        console.log('pressed');
+        l = locationInput.value;
+        console.log(l);
+        locationInput.value = '';
+        return this.render(l);
+      }
+    });
+
+    return this.render();
+  }
+
   connectedCallback() {
-    this.render();
+    this.locationLookup();
+    // this.render();
   }
 }
 
