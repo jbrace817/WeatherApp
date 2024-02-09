@@ -73,7 +73,63 @@ currentWeatherTemplate.innerHTML = `
     /* width: clamp(3.875rem, 3.61423rem + 1.098vw, 6.25rem);
     height: clamp(3.875rem, 3.61423rem + 1.098vw, 6.25rem); */
   }
+  .loaderContainer {
+    margin-top: clamp(4rem, 3.40958rem + 2.486vw, 9.375rem); /*margin-top	380	64	PX	3840	150	PX*/
+    justify-content: center;
+    align-items: center
+  }
+  .loader {
+    color: #ffffffc7;
+    font-size: clamp(1.875rem, 1.3601rem + 2.168vw, 6.5625rem); /*image	380	30	PX	3840	105	PX*/
+    text-indent: -9999em;
+    overflow: hidden;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: relative;
+    transform: translateZ(0);
+    animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
+  }
   
+  @keyframes mltShdSpin {
+    0% {
+      box-shadow: 0 -0.83em 0 -0.4em,
+      0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+      0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+    5%,
+    95% {
+      box-shadow: 0 -0.83em 0 -0.4em, 
+      0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em, 
+      0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+    10%,
+    59% {
+      box-shadow: 0 -0.83em 0 -0.4em, 
+      -0.087em -0.825em 0 -0.42em, -0.173em -0.812em 0 -0.44em, 
+      -0.256em -0.789em 0 -0.46em, -0.297em -0.775em 0 -0.477em;
+    }
+    20% {
+      box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+       -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em, 
+       -0.749em -0.34em 0 -0.477em;
+    }
+    38% {
+      box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+       -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em, 
+       -0.82em -0.09em 0 -0.477em;
+    }
+    100% {
+      box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 
+      0 -0.83em 0 -0.44em, 0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+    }
+  }
+  
+  @keyframes round {
+    0% { transform: rotate(0deg) }
+    100% { transform: rotate(360deg) }
+  }
+   
 </style>
 <div class="currentWeatherContainer">
 <h1 class="medium">Good Morning</h1>
@@ -84,6 +140,10 @@ currentWeatherTemplate.innerHTML = `
   placeholder="Enter your City"
 />
 <p class="medium">Now</p>
+<div class="loaderContainer">
+<span class="loader"></span>
+</div>
+<div id="dataContainer">
 <div class="currentTemp">
   <p class="large" temp=""></p>
   <img id="imgNow" src="" alt=""/>
@@ -93,6 +153,7 @@ currentWeatherTemplate.innerHTML = `
   <p class="medium" text="">Mist</p>
   <p class="small">Feels like: <span feelsLike=""></span></p>
   <p class="small">Wind: <span wind=""></span></p>
+</div>
 </div>
 </div>`;
 
@@ -116,14 +177,21 @@ class CurrentConditions extends HTMLElement {
     let feelsLike = this.shadowRoot.querySelector('[feelsLike]');
     let wind = this.shadowRoot.querySelector('[wind]');
     let imgNow = this.shadowRoot.getElementById('imgNow');
+    const loaderContainer = this.shadowRoot.querySelector('.loaderContainer');
+    const dataContainer = this.shadowRoot.getElementById('dataContainer');
 
     const imperial = '&deg;F';
     const metric = '&deg;C';
     const mph = 'mph';
     const kph = 'kph';
     console.log(currentTemp);
+    dataContainer.style.display = 'none';
+    loaderContainer.style.display = 'flex';
     todaysWeather.current(await GeoLocation.latLong()).then((data) => {
       console.log(data);
+      loaderContainer.style.display = 'none';
+      dataContainer.style.display = 'block';
+
       currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
       currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
       imgNow.setAttribute('src', data.current.condition.icon);

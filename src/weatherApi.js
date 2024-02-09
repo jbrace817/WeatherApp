@@ -21,7 +21,11 @@ class GeoLocation {
       return cposition;
       // Do something with position.latitude and position.longitude
     } catch (error) {
-      console.error('Error getting geolocation:', error.message);
+      if (error.code === error.PERMISSION_DENIED) {
+        return 'new york city';
+      } else {
+        console.error('Error getting geolocation:', error.message);
+      }
     }
   }
 }
