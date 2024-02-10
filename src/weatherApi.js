@@ -62,6 +62,16 @@ class WeatherAPI {
     const call = `forecast.json?key=${this.APIKEY}&q=${query}&days=3&aqi=no&alerts=no`;
     return await this.queryCurrentConditions(call);
   }
+  async autoComplete(query) {
+    const call = `search.json?key=${this.APIKEY}&q=${query}`;
+    try {
+      const response = await fetch(this.url + call, { mode: 'cors' });
+      let data = await response.json();
+      return data;
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   async queryCurrentConditions(apiCall) {
     try {

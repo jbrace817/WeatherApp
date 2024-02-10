@@ -8,6 +8,7 @@ currentWeatherTemplate.innerHTML = `
     box-sizing: border-box;
   }
   #search-location {
+    position: relative; 
     /* width: clamp(13rem, 10.1994rem + 11.792vw, 38.5rem);
     height: clamp(1.0625rem, 0.7262rem + 1.416vw, 5.125rem); */
     /* width: 615px; 4k
@@ -22,13 +23,34 @@ currentWeatherTemplate.innerHTML = `
     background-color: rgba(0, 0, 0, 0.5);
     border-style: none;
     text-align: center;
-    /* p	380	14	PX	3840	50	PX */
-    margin: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem) 0
-      clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem) 0;
-  
-    /* margin: 50px 0 50px 0; 4k desktop */
+    /* margin	380	14	PX	3840	50	PX */
+    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+    outline:none;
   }
-  
+
+  #search-container{
+    
+  }
+
+  #search-dropdown{
+    position:absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    width:90%;
+    height: 100px;
+    margin-left:2%;
+    border-radius: 10px;
+    color: #ffffff;
+    overflow-y: auto;
+    visibility: hidden;
+  }
+
+  .dropdownItem:hover{
+    cursor:pointer;
+    background-color:#858585b3;
+  }
+  #nowText{
+    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+  }
   .large {
     /*p	380	62	PX	3840	200	PX*/
     font-size: clamp(3.875rem, 2.92785rem + 3.988vw, 12.5rem);
@@ -133,13 +155,17 @@ currentWeatherTemplate.innerHTML = `
 </style>
 <div class="currentWeatherContainer">
 <h1 class="medium">Good Morning</h1>
+<div id="search-container">
 <input
   type="text"
   name="location"
   id="search-location"
   placeholder="Enter your City"
 />
-<p class="medium">Now</p>
+<div id="search-dropdown">
+</div>
+</div>
+<p class="medium" id="nowText">Now</p>
 <div class="loaderContainer">
 <span class="loader"></span>
 </div>
@@ -206,18 +232,43 @@ class CurrentConditions extends HTMLElement {
 
   async locationLookup() {
     const locationInput = this.shadowRoot.getElementById('search-location');
-    let l = '';
-    locationInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && locationInput.value) {
-        console.log('pressed');
-        l = locationInput.value;
-        console.log(l);
-        locationInput.value = '';
-        return this.render(l);
+    // let l = '';
+    // locationInput.addEventListener('keypress', (e) => {
+    //   if (e.key === 'Enter' && locationInput.value) {
+    //     console.log('pressed');
+    //     l = locationInput.value;
+    //     console.log(l);
+    //     locationInput.value = '';
+    //     return this.render(l);
+    //   }
+    // });
+    const dropdown = this.shadowRoot.getElementById('search-dropdown');
+    // todaysWeather.autoComplete('london').then((data) => console.log(data));
+    locationInput.addEventListener('input', (e) => {
+      if (!e.target.value) {
+        dropdown.style.visibility = 'hidden';
+      } else {
+        todaysWeather.autoComplete(e.target.value).then((data) => {
+          dropdown.innerHTML = '';
+          if (data.length > 0) {
+            dropdown.style.visibility = 'visible';
+            data.forEach((value) => {
+              console.log(value);
+              console.log(value.name, value.region, value.country);
+              const locationItemDiv = document.createElement('div');
+              locationItemDiv.classList.add('dropdownItem');
+              locationItemDiv.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
+              dropdown.appendChild(locationItemDiv);
+            });
+          } else {
+            dropdown.style.visibility = 'hidden';
+          }
+          console.log(data);
+        });
       }
+      console.log(e.target.value);
     });
-
-    return this.render();
+    // return this.render();
   }
 
   connectedCallback() {
