@@ -194,6 +194,8 @@ class CurrentConditions extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(currentWeatherTemplate.content.cloneNode(true));
+    this.locationInput = this.shadowRoot.getElementById('search-location');
+    this.dropdown = this.shadowRoot.getElementById('search-dropdown');
   }
 
   async render(location = GeoLocation.latLong()) {
@@ -213,7 +215,7 @@ class CurrentConditions extends HTMLElement {
     console.log(currentTemp);
     dataContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
-    todaysWeather.current(await location).then((data) => {
+    todaysWeather.forcast(await location).then((data) => {
       console.log(data);
       loaderContainer.style.display = 'none';
       dataContainer.style.display = 'block';
@@ -230,48 +232,121 @@ class CurrentConditions extends HTMLElement {
     });
   }
 
-  async locationLookup() {
-    const locationInput = this.shadowRoot.getElementById('search-location');
-    // let l = '';
-    // locationInput.addEventListener('keypress', (e) => {
-    //   if (e.key === 'Enter' && locationInput.value) {
-    //     console.log('pressed');
-    //     l = locationInput.value;
-    //     console.log(l);
-    //     locationInput.value = '';
-    //     return this.render(l);
-    //   }
-    // });
-    const dropdown = this.shadowRoot.getElementById('search-dropdown');
-    // todaysWeather.autoComplete('london').then((data) => console.log(data));
-    locationInput.addEventListener('input', (e) => {
+  async locationLookup(value) {
+    if (!this.locationInput.value) {
+      return this.render();
+    }
+    return this.render(value);
+  }
+
+  async selectLocationsByClick() {
+    this.locationInput.addEventListener('input', (e) => {
       if (!e.target.value) {
-        dropdown.style.visibility = 'hidden';
+        this.dropdown.style.visibility = 'hidden';
       } else {
         todaysWeather.autoComplete(e.target.value).then((data) => {
-          dropdown.innerHTML = '';
+          this.dropdown.innerHTML = '';
           if (data.length > 0) {
-            dropdown.style.visibility = 'visible';
+            this.dropdown.style.visibility = 'visible';
             data.forEach((value) => {
-              console.log(value);
-              console.log(value.name, value.region, value.country);
+              // console.log(value);
+              // console.log(value.name, value.region, value.country);
               const locationItemDiv = document.createElement('div');
               locationItemDiv.classList.add('dropdownItem');
+              locationItemDiv.setAttribute('name', value.name);
+              locationItemDiv.setAttribute('region', value.region);
               locationItemDiv.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
-              dropdown.appendChild(locationItemDiv);
+              this.dropdown.appendChild(locationItemDiv);
+              locationItemDiv.addEventListener('click', (e) => {
+                this.dropdown.style.visibility = 'hidden';
+                this.locationInput.value = `${value.name}, ${value.region}`;
+                this.render(this.locationInput.value);
+                // console.log(locationItemDiv.innerHTML);
+              });
             });
           } else {
-            dropdown.style.visibility = 'hidden';
+            this.dropdown.style.visibility = 'hidden';
           }
-          console.log(data);
+          // console.log(data);
         });
       }
-      console.log(e.target.value);
+      // console.log(e.target.value);
     });
-    // return this.render();
+  }
+
+  async selectLocationsByKeydown() {
+    let index = 0;
+    let locationObj = {};
+
+    this.locationInput.addEventListener('keydown', (e) => {
+      const dropDownItems = this.shadowRoot.querySelectorAll('.dropdownItem');
+
+      console.log('test');
+
+      if (e.key === 'Tab' || e.key === 'ArrowDown') {
+        e.preventDefault(); // Prevent default tab behavior
+        console.log(dropDownItems.length);
+
+        if (dropDownItems.length <= 0) {
+          return;
+        }
+        if (index === dropDownItems.length) {
+          dropDownItems[index - 1].style.backgroundColor = '';
+          index = 0;
+        }
+        if (index > 0) {
+          dropDownItems[index - 1].style.backgroundColor = '';
+        }
+        console.log(dropDownItems[index]);
+        dropDownItems[index].style.backgroundColor = '#858585b3';
+        locationObj.name = dropDownItems[index].getAttribute('name');
+        locationObj.region = dropDownItems[index].getAttribute('region');
+        index++;
+        console.log(index);
+      } else {
+        index = 0;
+      }
+
+      // if (e.key === 'ArrowUp') {
+      //   dropDownItems[index - 1].style.backgroundColor = '';
+      //   index--;
+
+      //   if (index === 0) {
+      //     console.log(index);
+      //     index = dropDownItems.length;
+      //   }
+      //   dropDownItems[index - 1].style.backgroundColor = '#858585b3';
+      //   console.log(dropDownItems[index - 1]);
+      //   locationObj.name = dropDownItems[index - 1].getAttribute('name');
+      //   locationObj.region = dropDownItems[index - 1].getAttribute('region');
+      // } else {
+      //   index = dropDownItems.length;
+      // }
+      if (e.key === 'Enter') {
+        if (!locationObj.name && !locationObj.region) {
+          console.log(this.locationInput.value);
+          console.log(dropDownItems[index].getAttribute('name'));
+          this.locationInput.value = `${dropDownItems[index].getAttribute('name')}, ${dropDownItems[index].getAttribute('region')}`;
+          this.locationLookup(this.locationInput.value);
+          console.log(locationObj.name);
+        } else {
+          this.locationInput.value = `${locationObj.name}, ${locationObj.region}`;
+          this.locationLookup(this.locationInput.value);
+          delete locationObj.name;
+          delete locationObj.region;
+        }
+
+        this.dropdown.style.visibility = 'hidden';
+      }
+    });
+
+    console.log(length);
   }
 
   connectedCallback() {
+    this.selectLocationsByKeydown();
+    this.selectLocationsByClick();
+
     this.locationLookup();
     // this.render();
   }
