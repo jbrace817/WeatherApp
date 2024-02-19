@@ -293,35 +293,21 @@ class CurrentConditions extends HTMLElement {
     this.locationInput.addEventListener('keydown', (e) => {
       const allLocationValues =
         this.shadowRoot.querySelectorAll('.dropdownValue');
-
+      if (allLocationValues.length <= 0) {
+        return;
+      }
       if (e.key === 'ArrowUp') {
         e.preventDefault();
-        if (allLocationValues.length <= 0) {
-          return;
-        }
-        if (index === -1) {
-          // console.log(index - 1);
-          index++;
-          console.log(index);
-        }
-        index--;
-        prevIndex = index + 1;
-        if (index < 0) {
-          index = allLocationValues.length - 1;
-        }
-        allLocationValues[index].classList.add('selected');
-        console.log(prevIndex);
-        // allLocationValues[prevIndex].classList.remove('selected');
-        if (prevIndex >= 0 && allLocationValues.length > 1) {
-          allLocationValues[prevIndex].classList.remove('selected');
-          console.log(allLocationValues.length);
-        }
+        reverseListSelection();
         this.shadowRoot.querySelector('.selected').scrollIntoView();
+      } else if (e.shiftKey) {
+        e.preventDefault();
+        if (e.key === 'Tab') {
+          reverseListSelection();
+          this.shadowRoot.querySelector('.selected').scrollIntoView();
+        }
       } else if (e.key === 'Tab' || e.key === 'ArrowDown') {
         e.preventDefault();
-        if (allLocationValues.length <= 0) {
-          return;
-        }
         index++;
         prevIndex = index - 1;
         if (index > allLocationValues.length - 1) {
@@ -347,6 +333,26 @@ class CurrentConditions extends HTMLElement {
         return this.locationLookup(indexValue);
       } else {
         index = -1;
+      }
+
+      function reverseListSelection() {
+        if (index === -1) {
+          // console.log(index - 1);
+          index++;
+          console.log(index);
+        }
+        index--;
+        prevIndex = index + 1;
+        if (index < 0) {
+          index = allLocationValues.length - 1;
+        }
+        allLocationValues[index].classList.add('selected');
+        console.log(prevIndex);
+        // allLocationValues[prevIndex].classList.remove('selected');
+        if (prevIndex >= 0 && allLocationValues.length > 1) {
+          allLocationValues[prevIndex].classList.remove('selected');
+          console.log(allLocationValues.length);
+        }
       }
     });
 
