@@ -1,3 +1,4 @@
+'use strict';
 import { GeoLocation, WeatherAPI } from './weatherApi';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
@@ -44,9 +45,16 @@ currentWeatherTemplate.innerHTML = `
     visibility: hidden;
   }
 
-  .dropdownItem:hover{
+  .dropdownValue {
+    padding: 5px;
+  }
+
+  .dropdownValue:hover{
     cursor:pointer;
     background-color:#858585b3;
+  }
+  .selected {
+    background-color: #858585b3;
   }
   #nowText{
     margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
@@ -169,10 +177,10 @@ currentWeatherTemplate.innerHTML = `
 <div class="loaderContainer">
 <span class="loader"></span>
 </div>
-<div id="dataContainer">
+<div id="currentTempContainer">
 <div class="currentTemp">
   <p class="large" temp=""></p>
-  <img id="imgNow" src="" alt=""/>
+  <img id="weatherIcon" src="" alt=""/>
 </div>
 
 <div class="currentConditions">
@@ -183,89 +191,92 @@ currentWeatherTemplate.innerHTML = `
 </div>
 </div>`;
 
-{
-  /* <span id="temp"></span> */
-}
-
-const todaysWeather = new WeatherAPI();
+const todaysWeather = new WeatherAPI(); //New object that is used to retrieve weather forecast
 
 class CurrentConditions extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(currentWeatherTemplate.content.cloneNode(true));
-    this.locationInput = this.shadowRoot.getElementById('search-location');
-    this.dropdown = this.shadowRoot.getElementById('search-dropdown');
+    this.locationInput = this.shadowRoot.getElementById('search-location'); //Text input for location lookup of temperature
+    this.dropdownList = this.shadowRoot.getElementById('search-dropdown'); //retrieves <div> of location values
   }
 
+  //Renders data to UI
   async render(location = GeoLocation.latLong()) {
-    // let currentTemp = this.shadowRoot.getElementById('temp');
     let currentTemp = this.shadowRoot.querySelector('[temp]');
     let weatherText = this.shadowRoot.querySelector('[text]');
     let feelsLike = this.shadowRoot.querySelector('[feelsLike]');
-    let wind = this.shadowRoot.querySelector('[wind]');
-    let imgNow = this.shadowRoot.getElementById('imgNow');
+    let windSpeed = this.shadowRoot.querySelector('[wind]');
+    let weatherIcon = this.shadowRoot.getElementById('weatherIcon');
     const loaderContainer = this.shadowRoot.querySelector('.loaderContainer');
-    const dataContainer = this.shadowRoot.getElementById('dataContainer');
+    const currentTempContainer = this.shadowRoot.getElementById(
+      'currentTempContainer',
+    );
 
-    const imperial = '&deg;F';
-    const metric = '&deg;C';
-    const mph = 'mph';
-    const kph = 'kph';
-    console.log(currentTemp);
-    dataContainer.style.display = 'none';
+    const imperial = '&deg;F'; //fahrenheit
+    const metric = '&deg;C'; // celsius
+    const mph = 'mph'; //miles per hour
+    const kph = 'kph'; //kilometers
+    //console.log(currentTemp);
+    currentTempContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
     todaysWeather.forcast(await location).then((data) => {
-      console.log(data);
+      //console.log(data);
       loaderContainer.style.display = 'none';
-      dataContainer.style.display = 'block';
+      currentTempContainer.style.display = 'block';
 
       currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
       currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-      imgNow.setAttribute('src', data.current.condition.icon);
+      weatherIcon.setAttribute('src', data.current.condition.icon);
       weatherText.setAttribute('text', data.current.condition.text);
       weatherText.textContent = `${weatherText.getAttribute('text')}`;
       feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
       feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
-      wind.setAttribute('wind', Math.round(data.current.wind_mph));
-      wind.innerHTML = `${wind.getAttribute('wind')} ${mph}`;
+      windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
+      windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
+      if (this.locationInput.value === '') {
+        //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
+        this.locationInput.value = `${data.location.name}, ${data.location.region}`;
+      }
     });
   }
 
   async locationLookup(value) {
     if (!this.locationInput.value) {
-      return this.render();
+      return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
     }
-    return this.render(value);
+    return this.render(value); //If a value exists it will pass the value to the render function
   }
 
   async selectLocationsByClick() {
+    //Allows user to click the value in dropdown
     this.locationInput.addEventListener('input', (e) => {
       if (!e.target.value) {
-        this.dropdown.style.visibility = 'hidden';
+        this.dropdownList.style.visibility = 'hidden';
       } else {
-        todaysWeather.autoComplete(e.target.value).then((data) => {
-          this.dropdown.innerHTML = '';
+        todaysWeather.autoCompleteList(e.target.value).then((data) => {
+          this.dropdownList.innerHTML = '';
           if (data.length > 0) {
-            this.dropdown.style.visibility = 'visible';
+            this.dropdownList.style.visibility = 'visible';
             data.forEach((value) => {
               // console.log(value);
               // console.log(value.name, value.region, value.country);
-              const locationItemDiv = document.createElement('div');
-              locationItemDiv.classList.add('dropdownItem');
-              locationItemDiv.setAttribute('name', value.name);
-              locationItemDiv.setAttribute('region', value.region);
-              locationItemDiv.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
-              this.dropdown.appendChild(locationItemDiv);
-              locationItemDiv.addEventListener('click', (e) => {
-                this.dropdown.style.visibility = 'hidden';
+              const specificLocation = document.createElement('div');
+              specificLocation.classList.add('dropdownValue');
+              specificLocation.setAttribute('name', value.name);
+              specificLocation.setAttribute('region', value.region);
+              specificLocation.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
+              this.dropdownList.appendChild(specificLocation);
+              specificLocation.addEventListener('click', (e) => {
+                this.dropdownList.style.visibility = 'hidden';
                 this.locationInput.value = `${value.name}, ${value.region}`;
                 this.render(this.locationInput.value);
-                // console.log(locationItemDiv.innerHTML);
+                // console.log(specificLocation.innerHTML);
               });
             });
           } else {
-            this.dropdown.style.visibility = 'hidden';
+            this.dropdownList.style.visibility = 'hidden';
           }
           // console.log(data);
         });
@@ -275,80 +286,79 @@ class CurrentConditions extends HTMLElement {
   }
 
   async selectLocationsByKeydown() {
-    let index = 0;
-    let locationObj = {};
+    //Allows use of keyboard to select location values
+    let index = -1;
+    let prevIndex;
 
     this.locationInput.addEventListener('keydown', (e) => {
-      const dropDownItems = this.shadowRoot.querySelectorAll('.dropdownItem');
+      const allLocationValues =
+        this.shadowRoot.querySelectorAll('.dropdownValue');
 
-      console.log('test');
-
-      if (e.key === 'Tab' || e.key === 'ArrowDown') {
-        e.preventDefault(); // Prevent default tab behavior
-        console.log(dropDownItems.length);
-
-        if (dropDownItems.length <= 0) {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (allLocationValues.length <= 0) {
           return;
         }
-        if (index === dropDownItems.length) {
-          dropDownItems[index - 1].style.backgroundColor = '';
-          index = 0;
+        if (index === -1) {
+          // console.log(index - 1);
+          index++;
+          console.log(index);
         }
-        if (index > 0) {
-          dropDownItems[index - 1].style.backgroundColor = '';
+        index--;
+        prevIndex = index + 1;
+        if (index < 0) {
+          index = allLocationValues.length - 1;
         }
-        console.log(dropDownItems[index]);
-        dropDownItems[index].style.backgroundColor = '#858585b3';
-        locationObj.name = dropDownItems[index].getAttribute('name');
-        locationObj.region = dropDownItems[index].getAttribute('region');
+        allLocationValues[index].classList.add('selected');
+        console.log(prevIndex);
+        // allLocationValues[prevIndex].classList.remove('selected');
+        if (prevIndex >= 0 && allLocationValues.length > 1) {
+          allLocationValues[prevIndex].classList.remove('selected');
+          console.log(allLocationValues.length);
+        }
+        this.shadowRoot.querySelector('.selected').scrollIntoView();
+      } else if (e.key === 'Tab' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (allLocationValues.length <= 0) {
+          return;
+        }
         index++;
-        console.log(index);
-      } else {
-        index = 0;
-      }
-
-      // if (e.key === 'ArrowUp') {
-      //   dropDownItems[index - 1].style.backgroundColor = '';
-      //   index--;
-
-      //   if (index === 0) {
-      //     console.log(index);
-      //     index = dropDownItems.length;
-      //   }
-      //   dropDownItems[index - 1].style.backgroundColor = '#858585b3';
-      //   console.log(dropDownItems[index - 1]);
-      //   locationObj.name = dropDownItems[index - 1].getAttribute('name');
-      //   locationObj.region = dropDownItems[index - 1].getAttribute('region');
-      // } else {
-      //   index = dropDownItems.length;
-      // }
-      if (e.key === 'Enter') {
-        if (!locationObj.name && !locationObj.region) {
-          console.log(this.locationInput.value);
-          console.log(dropDownItems[index].getAttribute('name'));
-          this.locationInput.value = `${dropDownItems[index].getAttribute('name')}, ${dropDownItems[index].getAttribute('region')}`;
-          this.locationLookup(this.locationInput.value);
-          console.log(locationObj.name);
-        } else {
-          this.locationInput.value = `${locationObj.name}, ${locationObj.region}`;
-          this.locationLookup(this.locationInput.value);
-          delete locationObj.name;
-          delete locationObj.region;
+        prevIndex = index - 1;
+        if (index > allLocationValues.length - 1) {
+          index = 0;
+          prevIndex = allLocationValues.length - 1;
+        }
+        allLocationValues[index].classList.add('selected');
+        if (prevIndex >= 0 && allLocationValues.length > 1) {
+          allLocationValues[prevIndex].classList.remove('selected');
+          console.log(allLocationValues.length);
         }
 
-        this.dropdown.style.visibility = 'hidden';
+        this.shadowRoot.querySelector('.selected').scrollIntoView();
+      } else if (e.key === 'Enter') {
+        let indexValue = '';
+        if (allLocationValues[index]) {
+          indexValue = `${allLocationValues[index].getAttribute('name')}, ${allLocationValues[index].getAttribute('region')}`;
+        } else {
+          indexValue = `${allLocationValues[0].getAttribute('name')}, ${allLocationValues[0].getAttribute('region')}`;
+        }
+        this.locationInput.value = indexValue;
+        this.dropdownList.style.visibility = 'hidden';
+        return this.locationLookup(indexValue);
+      } else {
+        index = -1;
       }
     });
 
-    console.log(length);
+    // console.log(length);
   }
 
   connectedCallback() {
+    //browser calls this when element is added to the document
     this.selectLocationsByKeydown();
     this.selectLocationsByClick();
-
     this.locationLookup();
-    // this.render();
+    this.render();
   }
 }
 
