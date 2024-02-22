@@ -8,6 +8,32 @@ currentWeatherTemplate.innerHTML = `
     padding: 0;
     box-sizing: border-box;
   }
+
+  label {
+    position: relative;
+  }
+  
+  .pin {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: url("./images/map-pin.svg") center / contain no-repeat;
+    z-index:1;
+  }
+  .clearText {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: url("./images/x-circle-fill.svg") center / contain no-repeat;
+    z-index:1;
+  }
+
   #search-location {
     position: relative; 
     /* width: clamp(13rem, 10.1994rem + 11.792vw, 38.5rem);
@@ -23,10 +49,14 @@ currentWeatherTemplate.innerHTML = `
     border-radius: 50px;
     background-color: rgba(0, 0, 0, 0.5);
     border-style: none;
-    text-align: center;
     /* margin	380	14	PX	3840	50	PX */
     margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
     outline:none;
+    padding: 0 37px 0 37px;
+  }
+
+  #search-location::placeholder {
+    color: #000000;
   }
 
   #search-container{
@@ -62,21 +92,21 @@ currentWeatherTemplate.innerHTML = `
   .large {
     /*p	380	62	PX	3840	200	PX*/
     font-size: clamp(3.875rem, 2.92785rem + 3.988vw, 12.5rem);
-    color: #ffffffc7;
+    /*color: #ffffff;*/
     font-weight: 400;
   }
   
   .medium {
     /* p	380	24	PX	3840	64	PX */
     font-size: clamp(1.5rem, 1.22545rem + 1.156vw, 4rem);
-    color: #ffffffc7;
+    /*color: #ffffff;*/
     font-weight: 400;
   }
   
   .small {
     /*p	380	14	PX	3840	36	PX*/
     font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem);
-    color: #ffffffc7;
+    /*color: #ffffff;*/
     font-weight: 400;
   }
   
@@ -109,7 +139,7 @@ currentWeatherTemplate.innerHTML = `
     align-items: center
   }
   .loader {
-    color: #ffffffc7;
+    /*color: #ffffff;*/
     font-size: clamp(1.875rem, 1.3601rem + 2.168vw, 6.5625rem); /*image	380	30	PX	3840	105	PX*/
     text-indent: -9999em;
     overflow: hidden;
@@ -162,14 +192,17 @@ currentWeatherTemplate.innerHTML = `
    
 </style>
 <div class="currentWeatherContainer">
-<h1 class="medium">Good Morning</h1>
 <div id="search-container">
+<label>
+<span class="pin"></span>
 <input
   type="text"
   name="location"
   id="search-location"
   placeholder="Enter your City"
 />
+<span class="clearText"></span>
+</label>
 <div id="search-dropdown">
 </div>
 </div>
@@ -222,7 +255,7 @@ class CurrentConditions extends HTMLElement {
     currentTempContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
     todaysWeather.forcast(await location).then((data) => {
-      //console.log(data);
+      console.log(data);
       loaderContainer.style.display = 'none';
       currentTempContainer.style.display = 'block';
 
@@ -359,10 +392,18 @@ class CurrentConditions extends HTMLElement {
     // console.log(length);
   }
 
+  clearText() {
+    const clearIcon = this.shadowRoot.querySelector('.clearText');
+    clearIcon.addEventListener('click', (e) => {
+      this.locationInput.value = '';
+    });
+  }
+
   connectedCallback() {
     //browser calls this when element is added to the document
     this.selectLocationsByKeydown();
     this.selectLocationsByClick();
+    this.clearText();
     this.locationLookup();
     this.render();
   }
