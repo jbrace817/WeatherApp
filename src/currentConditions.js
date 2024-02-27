@@ -254,7 +254,7 @@ class CurrentConditions extends HTMLElement {
     //console.log(currentTemp);
     currentTempContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
-    todaysWeather.forcast(await location).then((data) => {
+    todaysWeather.forecast(await location).then((data) => {
       console.log(data);
       loaderContainer.style.display = 'none';
       currentTempContainer.style.display = 'block';

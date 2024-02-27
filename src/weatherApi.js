@@ -42,8 +42,8 @@ class WeatherAPI {
     const call = `current.json?key=${this.APIKEY}&q=${query} &aqi=no`;
     return await this.queryCurrentConditions(call);
   }
-  //current weather + forcast for 3 days (free trial)
-  async forcast(query) {
+  //current weather + forecast for 3 days (free trial)
+  async forecast(query) {
     const call = `forecast.json?key=${this.APIKEY}&q=${query}&days=3&aqi=no&alerts=no`;
     return await this.queryCurrentConditions(call);
   }
