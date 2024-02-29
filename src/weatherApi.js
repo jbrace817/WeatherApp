@@ -22,6 +22,7 @@ class GeoLocation {
       return cposition; // Do something with position.latitude and position.longitude
     } catch (error) {
       if (error.code === error.PERMISSION_DENIED) {
+        console.log('You blocked access to your location');
         //if user decides to block access to location, default will be New york City.
         return 'new york city';
       } else {
