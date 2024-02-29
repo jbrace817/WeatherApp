@@ -24,6 +24,7 @@ currentWeatherTemplate.innerHTML = `
     z-index:1;
   }
   .clearText {
+    visibility: hidden;
     content: "";
     position: absolute;
     right: 50px;
@@ -32,6 +33,9 @@ currentWeatherTemplate.innerHTML = `
     height: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
     background: url("./images/x-circle-fill.svg") center / contain no-repeat;
     z-index:1;
+  }
+  .clearText:hover {
+    cursor:pointer;
   }
 
   #search-location {
@@ -284,6 +288,9 @@ class CurrentConditions extends HTMLElement {
         //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
         this.locationInput.value = `${data.location.name}, ${data.location.region}`;
       }
+      if (this.locationInput.value) {
+        this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
+      }
     });
   }
 
@@ -294,9 +301,10 @@ class CurrentConditions extends HTMLElement {
     return this.render(value); //If a value exists it will pass the value to the render function
   }
 
-  async selectLocationsByClick() {
+  async createDropdownList() {
     //Allows user to click the value in dropdown
     this.locationInput.addEventListener('input', (e) => {
+      this.clearLocationInputValue(e.target.value); //Reveals button to clear text when input detected
       if (!e.target.value) {
         this.dropdownList.style.visibility = 'hidden';
       } else {
@@ -313,12 +321,12 @@ class CurrentConditions extends HTMLElement {
               specificLocation.setAttribute('region', value.region);
               specificLocation.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
               this.dropdownList.appendChild(specificLocation);
-              specificLocation.addEventListener('click', (e) => {
-                this.dropdownList.style.visibility = 'hidden';
-                this.locationInput.value = `${value.name}, ${value.region}`;
-                this.render(this.locationInput.value);
-                // console.log(specificLocation.innerHTML);
-              });
+              //Event listener for clicking the location in the dropdown
+              this.selectLocationByClick(
+                specificLocation,
+                value.name,
+                value.region,
+              );
             });
           } else {
             this.dropdownList.style.visibility = 'hidden';
@@ -327,6 +335,14 @@ class CurrentConditions extends HTMLElement {
         });
       }
       // console.log(e.target.value);
+    });
+  }
+
+  async selectLocationByClick(div, name, region) {
+    div.addEventListener('click', (e) => {
+      this.dropdownList.style.visibility = 'hidden';
+      this.locationInput.value = `${name}, ${region}`;
+      this.render(this.locationInput.value);
     });
   }
 
@@ -341,17 +357,20 @@ class CurrentConditions extends HTMLElement {
       if (allLocationValues.length <= 0) {
         return;
       }
+      //Traverses location list up
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         reverseListSelection();
         this.shadowRoot.querySelector('.selected').scrollIntoView();
       } else if (e.shiftKey) {
+        //Traverses location list up using shift + tab
         e.preventDefault();
         if (e.key === 'Tab') {
           reverseListSelection();
           this.shadowRoot.querySelector('.selected').scrollIntoView();
         }
       } else if (e.key === 'Tab' || e.key === 'ArrowDown') {
+        //Traverses location list down
         e.preventDefault();
         index++;
         prevIndex = index - 1;
@@ -396,7 +415,6 @@ class CurrentConditions extends HTMLElement {
         // allLocationValues[prevIndex].classList.remove('selected');
         if (prevIndex >= 0 && allLocationValues.length > 1) {
           allLocationValues[prevIndex].classList.remove('selected');
-          console.log(allLocationValues.length);
         }
       }
     });
@@ -404,21 +422,34 @@ class CurrentConditions extends HTMLElement {
     // console.log(length);
   }
 
-  clearText() {
+  clearLocationInputValue(e) {
     const clearIcon = this.shadowRoot.querySelector('.clearText');
+    if (!e) {
+      clearIcon.style.visibility = 'hidden';
+    } else {
+      clearIcon.style.visibility = 'visible';
+    }
     clearIcon.addEventListener('click', (e) => {
       this.locationInput.value = '';
+      clearIcon.style.visibility = 'hidden';
+    });
+  }
+
+  getGeolocationMapPin() {
+    const mapPin = this.shadowRoot.querySelector('.pin');
+    mapPin.addEventListener('click', () => {
+      this.locationInput.value = '';
+      this.locationLookup();
     });
   }
 
   connectedCallback() {
     //browser calls this when element is added to the document
     this.selectLocationsByKeydown();
-    this.selectLocationsByClick();
-    this.clearText();
+    this.createDropdownList();
+    this.getGeolocationMapPin();
     this.locationLookup();
-    this.render();
-    console.log(this.locationInput.offsetLeft);
+    // this.render();
   }
 }
 
