@@ -5,13 +5,45 @@
   padding: 0;
   box-sizing: border-box;
 }
+:root {
+  --lightMode-text: #4f5867;
+}
+
+body.lightMode {
+  color: var(--lightMode-text);
+}
 
 body {
   width: 100vw;
   height: 100vh;
-  background-image: url('./images/2244.jpg');
+  background-image: url('./images/lightMode.jpg');
+  /* background: linear-gradient(180deg, #f1f5fc 0%, #eef5fc 100%); */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   font-family: 'Libre Franklin', sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template: 50vh 50vh / 1fr 1fr;
+}
+
+current-conditions {
+  grid-area: 1/ 1/ 2 / 3;
+}
+
+current-dashboard {
+  grid-area: 2 / 1 / 4 / 2;
+  align-self: center;
+}
+
+@media (max-width: 991.98px) {
+  .container {
+    grid-template: 1.6fr 1fr / auto;
+  }
+
+  current-dashboard {
+    align-self: start;
+  }
 }

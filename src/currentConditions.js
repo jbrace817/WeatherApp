@@ -1,5 +1,6 @@
 'use strict';
 import { GeoLocation, WeatherAPI } from './weatherApi';
+import { Dashboard } from './dashboard';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -262,7 +263,6 @@ class CurrentConditions extends HTMLElement {
     const currentTempContainer = this.shadowRoot.getElementById(
       'currentTempContainer',
     );
-
     const imperial = '&deg;F'; //fahrenheit
     const metric = '&deg;C'; // celsius
     const mph = 'mph'; //miles per hour
@@ -291,6 +291,7 @@ class CurrentConditions extends HTMLElement {
       if (this.locationInput.value) {
         this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
       }
+      this.setDashboardData(data);
     });
   }
 
@@ -441,6 +442,26 @@ class CurrentConditions extends HTMLElement {
       this.locationInput.value = '';
       this.locationLookup();
     });
+  }
+
+  setDashboardData(obj) {
+    const t = document
+      .querySelector('current-dashboard')
+      .shadowRoot.querySelectorAll('.data');
+    console.log(t);
+
+    let rain = obj.forecast.forecastday[0].day.daily_chance_of_rain + '%';
+    let sunrise = obj.forecast.forecastday[0].astro.sunrise;
+    let sunset = obj.forecast.forecastday[0].astro.sunset;
+    let humidity = obj.current.humidity + '%';
+    let pressure = obj.current.pressure_in + ' inHg';
+    let uv = obj.current.uv;
+
+    let cardData = [rain, sunrise, humidity, uv, sunset, pressure];
+
+    for (let i = 0; i < t.length; i++) {
+      t[i].innerHTML = cardData[i];
+    }
   }
 
   connectedCallback() {
