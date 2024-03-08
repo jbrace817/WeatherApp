@@ -1,6 +1,7 @@
 'use strict';
 
 import { CurrentConditions } from './currentConditions';
+require.context('./images', true, /\.svg$/);
 
 const suplementalDataTemplate = document.createElement('template');
 
@@ -51,7 +52,7 @@ suplementalDataTemplate.innerHTML = `
     
       
     }
-
+}
 </style>
 
 <div class="cardWrapper">
@@ -73,12 +74,12 @@ class Dashboard extends HTMLElement {
     let unitContainer;
 
     const obj = {
-      PoP: ['rain'],
-      Sunrise: ['sunrise'],
-      Humidity: ['humidity'],
-      'UV Index': ['uvIndex'],
-      Sunset: ['sunset'],
-      Pressure: ['pressure'],
+      PoP: ['rain.svg'],
+      Sunrise: ['sunrise.svg'],
+      Humidity: ['humidity.svg'],
+      'UV Index': ['uvIndex.svg'],
+      Sunset: ['sunset.svg'],
+      Pressure: ['pressure.svg'],
     };
 
     for (const key in obj) {
@@ -86,7 +87,7 @@ class Dashboard extends HTMLElement {
       unitContainer.classList.add('unit');
       unitContainer.innerHTML = `
             <p style="font-size: clamp(0.75rem, 0.6265rem + 0.52vw, 1.875rem); /*p	380	12	PX	3840	30*/">${key}</p>
-            <img id="rain" src="./images/${obj[key][0]}.svg" alt=""/>
+            <img id="rain" src="./images/${obj[key][0]}" alt=""/>
             <p style="height: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem)" class="data"></p>
             `;
       this.cardWrapper.appendChild(unitContainer);

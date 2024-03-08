@@ -277,7 +277,7 @@ class CurrentConditions extends HTMLElement {
 
       currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
       currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-      weatherIcon.setAttribute('src', data.current.condition.icon);
+      weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
       weatherText.setAttribute('text', data.current.condition.text);
       weatherText.textContent = `${weatherText.getAttribute('text')}`;
       feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
