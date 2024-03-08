@@ -14,7 +14,7 @@ suplementalDataTemplate.innerHTML = `
 
 .cardWrapper {
     width: clamp(20.25rem, 14.78025rem + 24.31vw, 73.125rem);  /*width 360 324 PX	3840 1170*/
-    height: clamp(7.75rem, 5.02165rem + 12.126vw, 34.125rem);  /*height	360	124	PX	3840	546	PX*/
+    height:clamp(10.875rem, 8.46975rem + 10.69vw, 34.125rem);  /*height	360	174	PX	3840	546	PX*/
     border-radius: 1.25rem;
     background-color: rgba(255, 255, 255, 0.75);
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -35,13 +35,19 @@ suplementalDataTemplate.innerHTML = `
     width: 80%;
     height: 90%;
     border-radius: 10px;
-    
+    font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem);
+  }
+
+  .unit img {
+    width: clamp(1.5rem, 1.37063rem + 0.575vw, 2.75rem); /*image	380	24	PX	3840	44	PX*/
+    height: clamp(1.5rem, 1.37063rem + 0.575vw, 2.75rem);
+
   }
 
 @media (max-width: 991.98px) {
     .cardWrapper {
       width: 90vw;
-      height: 174px;
+      
     
       
     }
@@ -79,9 +85,9 @@ class Dashboard extends HTMLElement {
       unitContainer = document.createElement('div');
       unitContainer.classList.add('unit');
       unitContainer.innerHTML = `
-            <p>${key}</p>
+            <p style="font-size: clamp(0.75rem, 0.6265rem + 0.52vw, 1.875rem); /*p	380	12	PX	3840	30*/">${key}</p>
             <img id="rain" src="./images/${obj[key][0]}.svg" alt=""/>
-            <p style="font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem); height: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem)" class="data"></p>
+            <p style="height: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem)" class="data"></p>
             `;
       this.cardWrapper.appendChild(unitContainer);
     }
