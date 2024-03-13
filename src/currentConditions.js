@@ -1,6 +1,9 @@
 'use strict';
 import { GeoLocation, WeatherAPI } from './weatherApi';
 import { Dashboard } from './dashboard';
+import { HourlyScroll } from './hourlyScroll';
+import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -292,6 +295,7 @@ class CurrentConditions extends HTMLElement {
         this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
       }
       this.setDashboardData(data);
+      this.setHourlyData(data);
     });
   }
 
@@ -445,10 +449,10 @@ class CurrentConditions extends HTMLElement {
   }
 
   setDashboardData(obj) {
-    const t = document
+    const dashboard = document
       .querySelector('current-dashboard')
       .shadowRoot.querySelectorAll('.data');
-    console.log(t);
+    console.log(dashboard);
 
     let rain = obj.forecast.forecastday[0].day.daily_chance_of_rain + '%';
     let sunrise = obj.forecast.forecastday[0].astro.sunrise;
@@ -457,10 +461,54 @@ class CurrentConditions extends HTMLElement {
     let pressure = obj.current.pressure_in + ' inHg';
     let uv = obj.current.uv;
 
-    let cardData = [rain, sunrise, humidity, uv, sunset, pressure];
+    let unitData = [rain, sunrise, humidity, uv, sunset, pressure];
 
-    for (let i = 0; i < t.length; i++) {
-      t[i].innerHTML = cardData[i];
+    for (let i = 0; i < dashboard.length; i++) {
+      dashboard[i].innerHTML = unitData[i];
+    }
+  }
+
+  setHourlyData(obj) {
+    const container = document
+      .querySelector('hourly-scroll')
+      .shadowRoot.querySelector('.allHours');
+
+    const timeDateNow = format(new Date(), 'Eha');
+    const dayOne = obj.forecast.forecastday[0].hour;
+    const dayTwo = obj.forecast.forecastday[1].hour;
+    const timeZone = obj.location.tz_id;
+    console.log(timeZone);
+
+    const twentyFourHrs = [...dayOne, ...dayTwo];
+    container.innerHTML = '';
+    for (let i = 0; i < twentyFourHrs.length; i++) {
+      console.log(
+        getTime(parseISO(twentyFourHrs[i].time)),
+        getTime(utcToZonedTime(startOfHour(new Date()), timeZone)),
+      );
+      if (
+        getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) <
+        getTime(startOfHour(new Date()))
+      ) {
+        continue;
+      }
+      const hour = document.createElement('div');
+      hour.classList.add('hour');
+      console.log();
+      if (
+        getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) ===
+        getTime(startOfHour(new Date()))
+      ) {
+        hour.innerHTML = `<p class="time">Now</p>`;
+      } else {
+        hour.innerHTML = `
+        <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`;
+      }
+      hour.innerHTML += `
+      <img src="http://${twentyFourHrs[i].condition.icon}" alt="">
+      <p class="temp">${Math.round(twentyFourHrs[i].temp_f)}&deg;F</p>
+    `;
+      container.appendChild(hour);
     }
   }
 

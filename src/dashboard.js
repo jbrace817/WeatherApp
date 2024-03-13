@@ -1,7 +1,7 @@
 'use strict';
 
 import { CurrentConditions } from './currentConditions';
-require.context('./images', true, /\.svg$/);
+require.context('./images', true, /\.svg$/); //add images to production mode in webpack
 
 const suplementalDataTemplate = document.createElement('template');
 
@@ -70,7 +70,7 @@ class Dashboard extends HTMLElement {
     this.cardWrapper = this.shadowRoot.querySelector('.cardWrapper');
   }
 
-  async render() {
+  render() {
     let unitContainer;
 
     const obj = {
@@ -87,14 +87,14 @@ class Dashboard extends HTMLElement {
       unitContainer.classList.add('unit');
       unitContainer.innerHTML = `
             <p style="font-size: clamp(0.75rem, 0.6265rem + 0.52vw, 1.875rem); /*p	380	12	PX	3840	30*/">${key}</p>
-            <img id="rain" src="./images/${obj[key][0]}" alt=""/>
+            <img src="./images/${obj[key][0]}" alt=""/>
             <p style="height: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem)" class="data"></p>
             `;
       this.cardWrapper.appendChild(unitContainer);
     }
   }
 
-  async connectedCallback() {
+  connectedCallback() {
     this.render();
   }
 }

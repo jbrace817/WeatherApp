@@ -35,6 +35,8 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1"
+    "@babel/polyfill": "^7.12.1",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.1"
   }
 }

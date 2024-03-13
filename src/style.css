@@ -34,16 +34,29 @@ current-conditions {
 }
 
 current-dashboard {
-  grid-area: 2 / 1 / 4 / 2;
+  grid-area: 2 / 1 / 3 / 2;
   align-self: center;
+}
+
+hourly-scroll {
+  grid-area: 1 / 1 / 2 / 3;
+  align-self: center;
+  justify-self: end;
+  z-index: 10;
 }
 
 @media (max-width: 991.98px) {
   .container {
-    grid-template: 1.6fr 1fr / auto;
+    grid-template: 1.6fr 1fr 1fr / auto;
   }
 
   current-dashboard {
-    align-self: start;
+    align-self: center;
+  }
+
+  hourly-scroll {
+    grid-area: 3/1/4/2;
+    align-self: center;
+    justify-self: start;
   }
 }
