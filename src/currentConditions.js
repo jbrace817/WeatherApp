@@ -1,7 +1,5 @@
 'use strict';
 import { GeoLocation, WeatherAPI } from './weatherApi';
-import { Dashboard } from './dashboard';
-import { HourlyScroll } from './hourlyScroll';
 import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 const currentWeatherTemplate = document.createElement('template');
@@ -54,8 +52,7 @@ currentWeatherTemplate.innerHTML = `
     border-radius: 50px;
     background-color: rgba(0, 0, 0, 0.5);
     border-style: none;
-    /* margin	380	14	PX	3840	50	PX */
-    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem); /* margin	380	14	PX	3840	50	PX */
     outline:none;
     padding: 0 37px 0 64px;
     font-size: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
@@ -97,30 +94,27 @@ currentWeatherTemplate.innerHTML = `
     margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
   }
   .large {
-    /*p	380	62	PX	3840	200	PX*/
-    font-size: clamp(3.875rem, 2.92785rem + 3.988vw, 12.5rem);
+    font-size: clamp(3.875rem, 2.92785rem + 3.988vw, 12.5rem); /*p	380	62	PX	3840	200	PX*/
     /*color: #ffffff;*/
     font-weight: 400;
   }
   
   .medium {
-    /* p	380	24	PX	3840	64	PX */
-    font-size: clamp(1.5rem, 1.22545rem + 1.156vw, 4rem);
+    font-size: clamp(1.5rem, 1.22545rem + 1.156vw, 4rem); /* p	380	24	PX	3840	64	PX */
     /*color: #ffffff;*/
     font-weight: 400;
   }
   
   .small {
-    /*p	380	14	PX	3840	36	PX*/
-    font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem);
+    font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem); /*p	380	14	PX	3840	36	PX*/
     /*color: #ffffff;*/
     font-weight: 400;
   }
   
   .currentWeatherContainer {
     position: absolute;
-    /* margin-top	380	16	PX	3840	150	PX */
-    margin-top: clamp(1rem, 0.08016rem + 3.873vw, 9.375rem);
+    
+    margin-top: clamp(1rem, 0.08016rem + 3.873vw, 9.375rem);/* margin-top	380	16	PX	3840	150	PX */
     /*width	380	210	PX	3840	650	PX*/
     /*width: clamp(13.125rem, 10.10471rem + 12.717vw, 40.625rem);*/
     width: 85vw;
@@ -132,8 +126,8 @@ currentWeatherTemplate.innerHTML = `
   }
   
   .currentTemp img {
-    /*image	380	62	PX	3840	210	PX*/
-    width: clamp(3.875rem, 2.85921rem + 4.277vw, 13.125rem);
+    
+    width: clamp(3.875rem, 2.85921rem + 4.277vw, 13.125rem); /*image	380	62	PX	3840	210	PX*/
     height: clamp(3.875rem, 2.85921rem + 4.277vw, 13.125rem);
   
     /* width: clamp(3.875rem, 3.61423rem + 1.098vw, 6.25rem);
@@ -203,8 +197,7 @@ currentWeatherTemplate.innerHTML = `
       border-radius: 50px;
       background-color: rgba(0, 0, 0, 0.5);
       border-style: none;
-      /* margin	380	14	PX	3840	50	PX */
-      margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+      margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);/* margin	380	14	PX	3840	50	PX */
       outline:none;
       padding: 0 80px 0 48px;
     }
@@ -273,40 +266,49 @@ class CurrentConditions extends HTMLElement {
     //console.log(currentTemp);
     currentTempContainer.style.display = 'none';
     loaderContainer.style.display = 'flex';
-    todaysWeather.forecast(await location).then((data) => {
-      console.log(data);
-      loaderContainer.style.display = 'none';
-      currentTempContainer.style.display = 'block';
-
-      currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
-      currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-      weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
-      weatherText.setAttribute('text', data.current.condition.text);
-      weatherText.textContent = `${weatherText.getAttribute('text')}`;
-      feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
-      feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
-      windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
-      windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
-      if (this.locationInput.value === '') {
-        //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
-        this.locationInput.value = `${data.location.name}, ${data.location.region}`;
-      }
-      if (this.locationInput.value) {
-        this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
-      }
-      this.setDashboardData(data);
-      this.setHourlyData(data);
-    });
+    todaysWeather
+      .forecast(await location)
+      .then((data) => {
+        loaderContainer.style.display = 'none';
+        currentTempContainer.style.display = 'block';
+        currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
+        currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
+        weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
+        weatherText.setAttribute('text', data.current.condition.text);
+        weatherText.textContent = `${weatherText.getAttribute('text')}`;
+        feelsLike.setAttribute(
+          'feelsLike',
+          Math.round(data.current.feelslike_f),
+        );
+        feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
+        windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
+        windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
+        if (this.locationInput.value === '') {
+          //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
+          this.locationInput.value = `${data.location.name}, ${data.location.region}`;
+        }
+        if (this.locationInput.value) {
+          this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
+        }
+        return data;
+      })
+      .then((data) => {
+        this.setDashboardData(data);
+        return data;
+      })
+      .then((data) => {
+        this.setHourlyData(data);
+      });
   }
 
-  async locationLookup(value) {
+  locationLookup(value) {
     if (!this.locationInput.value) {
       return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
     }
     return this.render(value); //If a value exists it will pass the value to the render function
   }
 
-  async createDropdownList() {
+  createDropdownList() {
     //Allows user to click the value in dropdown
     this.locationInput.addEventListener('input', (e) => {
       this.clearLocationInputValue(e.target.value); //Reveals button to clear text when input detected
@@ -343,7 +345,7 @@ class CurrentConditions extends HTMLElement {
     });
   }
 
-  async selectLocationByClick(div, name, region) {
+  selectLocationByClick(div, name, region) {
     div.addEventListener('click', (e) => {
       this.dropdownList.style.visibility = 'hidden';
       this.locationInput.value = `${name}, ${region}`;
@@ -351,7 +353,7 @@ class CurrentConditions extends HTMLElement {
     });
   }
 
-  async selectLocationsByKeydown() {
+  selectLocationsByKeydown() {
     //Allows use of keyboard to select location values
     let index = -1;
     let prevIndex;
@@ -473,7 +475,6 @@ class CurrentConditions extends HTMLElement {
       .querySelector('hourly-scroll')
       .shadowRoot.querySelector('.allHours');
 
-    const timeDateNow = format(new Date(), 'Eha');
     const dayOne = obj.forecast.forecastday[0].hour;
     const dayTwo = obj.forecast.forecastday[1].hour;
     const timeZone = obj.location.tz_id;
@@ -482,10 +483,6 @@ class CurrentConditions extends HTMLElement {
     const twentyFourHrs = [...dayOne, ...dayTwo];
     container.innerHTML = '';
     for (let i = 0; i < twentyFourHrs.length; i++) {
-      console.log(
-        getTime(parseISO(twentyFourHrs[i].time)),
-        getTime(utcToZonedTime(startOfHour(new Date()), timeZone)),
-      );
       if (
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) <
         getTime(startOfHour(new Date()))
@@ -518,7 +515,6 @@ class CurrentConditions extends HTMLElement {
     this.createDropdownList();
     this.getGeolocationMapPin();
     this.locationLookup();
-    // this.render();
   }
 }
 

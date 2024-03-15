@@ -1,5 +1,5 @@
 'use strict';
-import { CurrentConditions } from './currentConditions';
+import { CurrentConditions, LocationData } from './currentConditions';
 
 const hourlyDataTemplate = document.createElement('template');
 
@@ -16,8 +16,7 @@ hourlyDataTemplate.innerHTML = `
     height: clamp(10vh, 12vh, 14vh); /**/
     border-radius: 1.25rem;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    margin-right: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem)
-    
+    margin-right: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem); /*margin-right	380	16	PX	3840	316	PX */    
 }
 
 .allHours{
@@ -55,16 +54,12 @@ img{
 @media (max-width: 991.98px) {
     .hourlyContainer {
       width: 90vw;
-      margin-left: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem);
-    
-      
+      margin-left: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem); /*smargin-left	380	16	PX	3840	316	PX */
     }
 }
 </style>
 <div class="hourlyContainer">
     <div class="allHours">
-        
-        
     </div>
 </div>
 `;
@@ -74,7 +69,6 @@ class HourlyScroll extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(hourlyDataTemplate.content.cloneNode(true));
-    this.container = this.shadowRoot.querySelector('.allHours');
   }
 
   render() {}
