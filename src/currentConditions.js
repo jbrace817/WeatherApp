@@ -249,68 +249,72 @@ class CurrentConditions extends HTMLElement {
     this.locationInput = this.shadowRoot.getElementById('search-location'); //Text input for location lookup of temperature
     this.dropdownList = this.shadowRoot.getElementById('search-dropdown'); //retrieves <div> of location values
     this.clearIcon = this.shadowRoot.querySelector('.clearText');
+    this.currentTempContainer = this.shadowRoot.getElementById(
+      'currentTempContainer',
+    );
+    this.loaderContainer = this.shadowRoot.querySelector('.loaderContainer'); //loader appears before data is loaded
     this.autoComplete = new AutoComplete(this);
   }
 
+  //fetches from weatherAPI.js and passes data to UI.
+  async fetchDataUpdateUI(location = GeoLocation.latLong()) {
+    try {
+      this.currentTempContainer.style.display = 'none';
+      this.loaderContainer.style.display = 'flex';
+      const data = await todaysWeather.forecast(await location);
+      console.log(data);
+      this.render(data);
+      this.setDashboardData(data);
+      this.setHourlyData(data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching weather data: ' + error);
+      //show error to user;
+      throw new Error(error);
+    }
+  }
+
   //Renders data to UI
-  async render(location = GeoLocation.latLong()) {
+  render(data) {
     let currentTemp = this.shadowRoot.querySelector('[temp]');
     let weatherText = this.shadowRoot.querySelector('[text]');
     let feelsLike = this.shadowRoot.querySelector('[feelsLike]');
     let windSpeed = this.shadowRoot.querySelector('[wind]');
     let weatherIcon = this.shadowRoot.getElementById('weatherIcon');
-    const loaderContainer = this.shadowRoot.querySelector('.loaderContainer');
-    const currentTempContainer = this.shadowRoot.getElementById(
-      'currentTempContainer',
-    );
     const imperial = '&deg;F'; //fahrenheit
     const metric = '&deg;C'; // celsius
     const mph = 'mph'; //miles per hour
     const kph = 'kph'; //kilometers
     //console.log(currentTemp);
-    currentTempContainer.style.display = 'none';
-    loaderContainer.style.display = 'flex';
-    todaysWeather
-      .forecast(await location)
-      .then((data) => {
-        loaderContainer.style.display = 'none';
-        currentTempContainer.style.display = 'block';
-        currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
-        currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-        weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
-        weatherText.setAttribute('text', data.current.condition.text);
-        weatherText.textContent = `${weatherText.getAttribute('text')}`;
-        feelsLike.setAttribute(
-          'feelsLike',
-          Math.round(data.current.feelslike_f),
-        );
-        feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
-        windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
-        windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
-        if (this.locationInput.value === '') {
-          //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
-          this.locationInput.value = `${data.location.name}, ${data.location.region}`;
-        }
-        if (this.locationInput.value) {
-          this.autoComplete.clearLocationInputValue(this.locationInput.value);
-          // this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
-        }
-        return data;
-      })
-      .then((data) => {
-        this.setDashboardData(data);
-        return data;
-      })
-      .then((data) => {
-        this.setHourlyData(data);
-      });
+
+    this.loaderContainer.style.display = 'none';
+    this.currentTempContainer.style.display = 'block';
+    currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
+    currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
+    weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
+    weatherText.setAttribute('text', data.current.condition.text);
+    weatherText.textContent = `${weatherText.getAttribute('text')}`;
+    feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
+    feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
+    windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
+    windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
+    if (this.locationInput.value === '') {
+      //if location is allowed using GeoLocaion API it will add the location to the text input. If denied, it will default to New York, New york
+      this.locationInput.value = `${data.location.name}, ${data.location.region}`;
+    }
+    if (this.locationInput.value) {
+      this.autoComplete.clearLocationInputValue(this.locationInput.value);
+      // this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
+    }
   }
 
   locationLookup(value) {
     if (!this.locationInput.value) {
-      return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
+      this.fetchDataUpdateUI();
+      //return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
     }
-    return this.render(value); //If a value exists it will pass the value to the render function
+    this.fetchDataUpdateUI(value);
+    //return this.render(value); //If a value exists it will pass the value to the render function
   }
 
   // createDropdownList() {
