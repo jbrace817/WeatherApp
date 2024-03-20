@@ -44,11 +44,7 @@ hourlyDataTemplate.innerHTML = `
 .time{
     /*border: 1px solid red;*/
 }
-img{
-    /*border: 1px solid blue;*/
-    width: 64px;
-    height: 64px;
-}
+
 
 
 @media (max-width: 991.98px) {

@@ -4,6 +4,7 @@ import { AutoComplete } from './autoComplete';
 import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { HourlyScroll } from './hourlyScroll';
+import { DailyForecast } from './dailyForecast';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -253,6 +254,7 @@ class CurrentConditions extends HTMLElement {
       'currentTempContainer',
     );
     this.loaderContainer = this.shadowRoot.querySelector('.loaderContainer'); //loader appears before data is loaded
+    this.today = new Date();
     this.autoComplete = new AutoComplete(this);
   }
 
@@ -266,6 +268,8 @@ class CurrentConditions extends HTMLElement {
       this.render(data);
       this.setDashboardData(data);
       this.setHourlyData(data);
+      this.setDailyForecast(data);
+      new DailyForecast(data);
       return data;
     } catch (error) {
       console.error('Error fetching weather data: ' + error);
@@ -312,9 +316,10 @@ class CurrentConditions extends HTMLElement {
     if (!this.locationInput.value) {
       this.fetchDataUpdateUI();
       //return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
+    } else {
+      this.fetchDataUpdateUI(value);
+      //return this.render(value); //If a value exists it will pass the value to the render function
     }
-    this.fetchDataUpdateUI(value);
-    //return this.render(value); //If a value exists it will pass the value to the render function
   }
 
   // createDropdownList() {
@@ -494,7 +499,7 @@ class CurrentConditions extends HTMLElement {
     for (let i = 0; i < twentyFourHrs.length; i++) {
       if (
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) <
-        getTime(startOfHour(new Date()))
+        getTime(startOfHour(this.today))
       ) {
         continue;
       }
@@ -503,7 +508,7 @@ class CurrentConditions extends HTMLElement {
       console.log();
       if (
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) ===
-        getTime(startOfHour(new Date()))
+        getTime(startOfHour(this.today))
       ) {
         hour.innerHTML = `<p class="time">Now</p>`;
       } else {
@@ -511,10 +516,49 @@ class CurrentConditions extends HTMLElement {
         <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`;
       }
       hour.innerHTML += `
-      <img src="http://${twentyFourHrs[i].condition.icon}" alt="">
+      <img style="width: 48px" src="http://${twentyFourHrs[i].condition.icon}" alt="">
       <p class="temp">${Math.round(twentyFourHrs[i].temp_f)}&deg;F</p>
     `;
       container.appendChild(hour);
+    }
+  }
+
+  setDailyForecast(data) {
+    const container = document.querySelector('.dailyContainer');
+    const currentDayOfweek = format(this.today, 'EEEE');
+
+    for (let i = 0; i < container.children.length; i++) {
+      let day = container.children[i].shadowRoot.querySelector('.dayOfWeek');
+      let weatherDescription =
+        container.children[i].shadowRoot.querySelector('.description');
+      let maxMinTemp = container.children[i].shadowRoot.querySelector('.temp');
+      let icon = container.children[i].shadowRoot.querySelector('.icon');
+      let dateToDayOfWeek = format(
+        parseISO(data.forecast.forecastday[i].date),
+        'EEEE',
+      );
+      if (currentDayOfweek === dateToDayOfWeek) {
+        day.setAttribute('day', 'Today');
+        day.innerHTML = day.getAttribute('day');
+      } else {
+        day.setAttribute('day', dateToDayOfWeek);
+        day.innerHTML = day.getAttribute('day');
+      }
+      weatherDescription.setAttribute(
+        'description',
+        data.forecast.forecastday[i].day.condition.text,
+      );
+      weatherDescription.innerHTML =
+        weatherDescription.getAttribute('description');
+      maxMinTemp.setAttribute(
+        'maxMin',
+        `${Math.round(data.forecast.forecastday[i].day.maxtemp_f)}/${Math.round(data.forecast.forecastday[i].day.mintemp_f)}&deg;F`,
+      );
+      maxMinTemp.innerHTML = maxMinTemp.getAttribute('maxMin');
+      icon.setAttribute(
+        'src',
+        `http://${data.forecast.forecastday[0].day.condition.icon}`,
+      );
     }
   }
 
