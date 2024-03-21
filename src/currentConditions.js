@@ -557,7 +557,7 @@ class CurrentConditions extends HTMLElement {
       maxMinTemp.innerHTML = maxMinTemp.getAttribute('maxMin');
       icon.setAttribute(
         'src',
-        `http://${data.forecast.forecastday[0].day.condition.icon}`,
+        `http://${data.forecast.forecastday[i].day.condition.icon}`,
       );
     }
   }
