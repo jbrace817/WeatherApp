@@ -8,6 +8,18 @@ import { DailyForecast } from './dailyForecast';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
+
+:host{
+  --icon-width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
+  --icon-height: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
+  --search-font: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
+  --input-bkgDark: rgba(0, 0, 0, 0.5);
+  --input-bkgLight: rgba(255, 255, 255, 0.5);
+  --dropdown-bkgLight: rgba(255, 255, 255, 0.75);
+  --dropdown-bkgDark: rgba(0, 0, 0, 0.7);
+  
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -23,8 +35,8 @@ currentWeatherTemplate.innerHTML = `
     position: absolute;
     left: 16px;
     bottom: 0;
-    width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
-    height: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
+    width: var(--icon-width);
+    height: var(--icon-height);
     background: url("./images/map-pin.svg") center / contain no-repeat;
     z-index:1;
   }
@@ -34,8 +46,8 @@ currentWeatherTemplate.innerHTML = `
     position: absolute;
     right: 50px;
     bottom: 0px;
-    width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
-    height: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
+    width: var(--icon-width);
+    height: var(--icon-height);
     background: url("./images/x-circle-fill.svg") center / contain no-repeat;
     z-index:1;
   }
@@ -46,24 +58,25 @@ currentWeatherTemplate.innerHTML = `
   #search-location {
     position: relative; 
     width: 100%;
-    /*width: clamp(
-      12.375rem,
-      9.51265rem + 12.052vw,
-      38.4375rem
-    );*/ /*p	380	198	PX	3840	615	PX*/
     height: clamp(3.125rem, 2.91909rem + 0.867vw, 5rem); /*height	380	50	PX	3840	129	PX*/
     border-radius: 50px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--input-bkgLight);
     border-style: none;
     margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem); /* margin	380	14	PX	3840	50	PX */
     outline:none;
     padding: 0 37px 0 64px;
-    font-size: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
+    font-size: var(--search-font); 
+    color: var(--lightMode-text);
+  }
+
+  .dark #search-location{
+    background-color: var(--input-bkgDark);
   }
 
   #search-location::placeholder {
-    color: #000000;
+    color: var(--lightMode-text);
   }
+
 
   #search-container{
     
@@ -71,19 +84,23 @@ currentWeatherTemplate.innerHTML = `
 
   #search-dropdown{
     position:absolute;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--dropdown-bkgLight);
     width:90%;
     height: 100px;
     margin-left:2%;
     border-radius: 10px;
-    color: #ffffff;
+    color: var(--lightMode-text);
     overflow-y: auto;
     visibility: hidden;
   }
 
+  .dark #search-dropdown{
+    background-color: var(--input-bkgDark);
+  }
+
   .dropdownValue {
     padding: 5px;
-    font-size: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
+    font-size: var(--search-font); 
   }
 
   .dropdownValue:hover{
@@ -97,31 +114,25 @@ currentWeatherTemplate.innerHTML = `
     margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
   }
   .large {
-    font-size: clamp(3.875rem, 2.92785rem + 3.988vw, 12.5rem); /*p	380	62	PX	3840	200	PX*/
-    /*color: #ffffff;*/
+    font-size: var(--large-text);
     font-weight: 400;
   }
   
   .medium {
-    font-size: clamp(1.5rem, 1.22545rem + 1.156vw, 4rem); /* p	380	24	PX	3840	64	PX */
-    /*color: #ffffff;*/
+    font-size: var(--medium-text); 
     font-weight: 400;
   }
   
   .small {
-    font-size: clamp(0.875rem, 0.72395rem + 0.636vw, 2.25rem); /*p	380	14	PX	3840	36	PX*/
-    /*color: #ffffff;*/
+    font-size: var(--small-text); 
     font-weight: 400;
   }
-  
+ 
   .currentWeatherContainer {
     position: absolute;
-    
     margin-top: clamp(1rem, 0.08016rem + 3.873vw, 9.375rem);/* margin-top	380	16	PX	3840	150	PX */
-    /*width	380	210	PX	3840	650	PX*/
-    /*width: clamp(13.125rem, 10.10471rem + 12.717vw, 40.625rem);*/
     width: 85vw;
-    margin: 0 clamp(1rem, -1.05936rem + 8.671vw, 19.75rem) 0 clamp(1rem, -1.05936rem + 8.671vw, 19.75rem);/* margin-left	380	16	PX	3840	316	PX */
+    margin: 0 var(--margin-leftRight) 0 var(--margin-leftRight);
   }
   
   .currentTemp {
@@ -129,19 +140,14 @@ currentWeatherTemplate.innerHTML = `
   }
   
   .currentTemp img {
-    
     width: clamp(3.875rem, 2.85921rem + 4.277vw, 13.125rem); /*image	380	62	PX	3840	210	PX*/
     height: clamp(3.875rem, 2.85921rem + 4.277vw, 13.125rem);
-  
-    /* width: clamp(3.875rem, 3.61423rem + 1.098vw, 6.25rem);
-    height: clamp(3.875rem, 3.61423rem + 1.098vw, 6.25rem); */
   }
   .loaderContainer {
     margin-top: clamp(4rem, 3.40958rem + 2.486vw, 9.375rem); /*margin-top	380	64	PX	3840	150	PX*/
-    margin-left: clamp(1rem, -1.05936rem + 8.671vw, 19.75rem)
+    margin-left: var(--margin-leftRight)
   }
   .loader {
-    /*color: #ffffff;*/
     font-size: clamp(1.875rem, 1.3601rem + 2.168vw, 6.5625rem); /*image	380	30	PX	3840	105	PX*/
     text-indent: -9999em;
     overflow: hidden;
@@ -193,15 +199,9 @@ currentWeatherTemplate.innerHTML = `
   }
 
   @media (max-width: 991.98px) {
-    #search-location {
-      position: relative; 
+    #search-location { 
       width: 90vw;
       height: clamp(3.125rem, 2.58279rem + 2.283vw, 8.0625rem); /*height	380	50	PX	3840	129	PX*/
-      border-radius: 50px;
-      background-color: rgba(0, 0, 0, 0.5);
-      border-style: none;
-      margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);/* margin	380	14	PX	3840	50	PX */
-      outline:none;
       padding: 0 80px 0 48px;
     }
   }
@@ -296,6 +296,7 @@ class CurrentConditions extends HTMLElement {
     currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
     currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
     weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
+    weatherIcon.setAttribute('alt', data.current.condition.text);
     weatherText.setAttribute('text', data.current.condition.text);
     weatherText.textContent = `${weatherText.getAttribute('text')}`;
     feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
@@ -516,7 +517,7 @@ class CurrentConditions extends HTMLElement {
         <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`;
       }
       hour.innerHTML += `
-      <img style="width: 48px" src="http://${twentyFourHrs[i].condition.icon}" alt="">
+      <img src="http://${twentyFourHrs[i].condition.icon}" alt="${twentyFourHrs[i].condition.text}">
       <p class="temp">${Math.round(twentyFourHrs[i].temp_f)}&deg;F</p>
     `;
       container.appendChild(hour);
@@ -559,6 +560,7 @@ class CurrentConditions extends HTMLElement {
         'src',
         `http://${data.forecast.forecastday[i].day.condition.icon}`,
       );
+      icon.setAttribute('alt', data.forecast.forecastday[i].day.condition.text);
     }
   }
 

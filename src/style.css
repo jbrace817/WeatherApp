@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
   margin: 0;
@@ -7,6 +7,34 @@
 }
 :root {
   --lightMode-text: #4f5867;
+  --large-text: clamp(
+    3.875rem,
+    2.92785rem + 3.988vw,
+    12.5rem
+  ); /*p	380	62	PX	3840	200	PX*/
+  --medium-text: clamp(
+    1.5rem,
+    1.22545rem + 1.156vw,
+    4rem
+  ); /* p	380	24	PX	3840	64	PX */
+  --small-text: clamp(
+    0.875rem,
+    0.72395rem + 0.636vw,
+    2.25rem
+  ); /*p	380	14	PX	3840	36	PX*/
+  --margin-leftRight: clamp(
+    1rem,
+    -1.05936rem + 8.671vw,
+    19.75rem
+  ); /* margin-left	380	16	PX	3840	316	PX */
+  --components-boxShadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  --components-borderRadius: 1.25rem;
+  --components-backgroundLight: rgba(255, 255, 255, 0.75);
+  --hourlyDaily-smFont: clamp(
+    1rem,
+    0.90381rem + 0.405vw,
+    1.875rem
+  ); /*p	380	16	PX	3840  30PX*/
 }
 
 body.lightMode {

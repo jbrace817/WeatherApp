@@ -9,20 +9,21 @@ dailyForecastTemplate.innerHTML = `
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
+}
 
+:host {
+    --icon-width: clamp(3.5rem, 2.84094rem + 2.775vw, 9.5rem); /*icon width	380	56	PX	3840	152	PX*/
+    --daily-lgFont: clamp(1.5rem, 1.30786rem + 0.809vw, 3.25rem); /* p	380	24	PX	3840	64	PX */
+}
 .dayContainer {
     display: flex;
     justify-content: center;
     align-items:center;
-    background-color: rgba(255, 255, 255, 0.75);
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    /*width: 700px; /*width	360	100	PX	3840	388	PX*/
+    background-color: var(--components-backgroundLight);
+    box-shadow: var(--components-boxShadow);
     height: clamp(3.75rem, 2.84483rem + 4.023vw, 12.5rem); /*height	360	60	PX	3840	200	PX*/
     width: clamp(14rem, 10.92245rem + 13.678vw, 43.75rem); /*width	360	224	PX	3840	700	PX*/
-    border-radius: 1.25rem;
-
-    img {width: clamp(3.75rem, 2.84483rem + 4.023vw, 12.5rem);}
+    border-radius: var(--components-borderRadius);
 }
 
 .day{
@@ -47,6 +48,22 @@ dailyForecastTemplate.innerHTML = `
     flex-shrink: 1;
 }
 
+.dayOfWeek{
+    align-self: start;
+    font-size: var(--daily-lgFont);
+    font-weight: 400;
+}
+
+.temp{
+    font-size: var(--small-text);
+    font-weight: 400;
+}
+
+.description {
+    font-size: var(--hourlyDaily-smFont); 
+    font-weight: 400;
+}
+
 @media (max-width: 991.98px) {
     .dayContainer {
       width: 90vw;
@@ -60,7 +77,7 @@ dailyForecastTemplate.innerHTML = `
             <p class="description"></p>
         </div>
         <div>
-            <img style="width: 56px" class="icon" src=""/>
+            <img style="width: var(--icon-width);" class="icon" src=""/>
         </div>
         <div>
             <p class="temp"></p>
