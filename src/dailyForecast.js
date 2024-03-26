@@ -21,7 +21,8 @@ dailyForecastTemplate.innerHTML = `
     align-items:center;
     background-color: var(--components-backgroundLight);
     box-shadow: var(--components-boxShadow);
-    height: clamp(3.75rem, 2.84483rem + 4.023vw, 12.5rem); /*height	360	60	PX	3840	200	PX*/
+    /*height: clamp(3.75rem, 2.84483rem + 4.023vw, 12.5rem); /*height	360	60	PX	3840	200	PX*/
+    height: clamp(3.75rem, 3.09094rem + 2.775vw, 9.75rem);
     width: clamp(14rem, 10.92245rem + 13.678vw, 43.75rem); /*width	360	224	PX	3840	700	PX*/
     border-radius: var(--components-borderRadius);
 }
@@ -31,7 +32,7 @@ dailyForecastTemplate.innerHTML = `
     width: 100%;
     justify-content: space-around;
     align-items: center;
-    height:100%
+    height:100%;
 }
 
 .text {
