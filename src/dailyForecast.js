@@ -25,6 +25,7 @@ dailyForecastTemplate.innerHTML = `
     height: clamp(3.75rem, 3.09094rem + 2.775vw, 9.75rem);
     width: clamp(14rem, 10.92245rem + 13.678vw, 43.75rem); /*width	360	224	PX	3840	700	PX*/
     border-radius: var(--components-borderRadius);
+    
 }
 
 .day{
@@ -68,6 +69,7 @@ dailyForecastTemplate.innerHTML = `
 @media (max-width: 991.98px) {
     .dayContainer {
       width: 90vw;
+      margin-left: var(--margin-leftRight);
     }
 }
 </style>

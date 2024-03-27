@@ -26,7 +26,8 @@
     1rem,
     -1.05936rem + 8.671vw,
     19.75rem
-  ); /* margin-left	380	16	PX	3840	316	PX */
+  ); /*margin-left	380	16	PX	3840	316	PX */
+
   --components-boxShadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   --components-borderRadius: 1.25rem;
   --components-backgroundLight: rgba(255, 255, 255, 0.75);
@@ -34,7 +35,7 @@
     1rem,
     0.90381rem + 0.405vw,
     1.875rem
-  ); /*p	380	16	PX	3840  30PX*/
+  ); /*p	380	16	PX	3840  30PX */
 }
 
 body.lightMode {
@@ -112,11 +113,10 @@ footer a {
   body {
     /* height: 118vh; */
 
-    height: fit-content;
     padding-bottom: 100px;
   }
   .container {
-    grid-template: 1.6fr 1fr 1fr / auto;
+    grid-template: 1.6fr 1fr 1fr 1fr / auto;
   }
 
   current-dashboard {
@@ -131,12 +131,13 @@ footer a {
 
   .dailyContainer {
     grid-area: 4/1/5/2;
-    justify-content: start;
-    align-items: center;
+    align-self: center;
+    justify-self: start;
   }
   footer {
     flex-direction: column;
     height: auto;
+    width: 100dvw;
   }
   footer a {
     margin: 2px;
