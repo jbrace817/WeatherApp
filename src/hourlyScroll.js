@@ -16,7 +16,7 @@ hourlyDataTemplate.innerHTML = `
     height: clamp(6.875rem, 6.0344rem + 3.736vw, 15rem); /*width	360	140	PX	3840	240	PX */
     border-radius: var(--components-borderRadius);
     box-shadow: var(--components-boxShadow);
-    
+    margin: 0 var(--margin-leftRight) 0 var(--margin-leftRight)
 }
 
 .allHours{
@@ -51,7 +51,7 @@ img {
 @media (max-width: 991.98px) {
     .hourlyContainer {
       width: 90vw;
-      margin-left: var(--margin-leftRight);
+      margin: 0 0 0 var(--margin-leftRight)
     }
 }
 </style>

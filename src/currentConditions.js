@@ -295,7 +295,7 @@ class CurrentConditions extends HTMLElement {
     this.currentTempContainer.style.display = 'block';
     currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
     currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
-    weatherIcon.setAttribute('src', `http:${data.current.condition.icon}`);
+    weatherIcon.setAttribute('src', `https:${data.current.condition.icon}`);
     weatherIcon.setAttribute('alt', data.current.condition.text);
     weatherText.setAttribute('text', data.current.condition.text);
     weatherText.textContent = `${weatherText.getAttribute('text')}`;
@@ -517,7 +517,7 @@ class CurrentConditions extends HTMLElement {
         <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`;
       }
       hour.innerHTML += `
-      <img src="http://${twentyFourHrs[i].condition.icon}" alt="${twentyFourHrs[i].condition.text}">
+      <img src="https://${twentyFourHrs[i].condition.icon}" alt="${twentyFourHrs[i].condition.text}">
       <p class="temp">${Math.round(twentyFourHrs[i].temp_f)}&deg;F</p>
     `;
       container.appendChild(hour);
@@ -558,7 +558,7 @@ class CurrentConditions extends HTMLElement {
       maxMinTemp.innerHTML = maxMinTemp.getAttribute('maxMin');
       icon.setAttribute(
         'src',
-        `http://${data.forecast.forecastday[i].day.condition.icon}`,
+        `https://${data.forecast.forecastday[i].day.condition.icon}`,
       );
       icon.setAttribute('alt', data.forecast.forecastday[i].day.condition.text);
     }

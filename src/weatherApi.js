@@ -34,7 +34,7 @@ class GeoLocation {
 
 class WeatherAPI {
   constructor() {
-    this.url = 'http://api.weatherapi.com/v1/';
+    this.url = 'https://api.weatherapi.com/v1/';
     this.APIKEY = '2781e0322a6547ef98a113813241901';
   }
 
