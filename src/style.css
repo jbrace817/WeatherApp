@@ -109,6 +109,44 @@ footer a {
   color: var(--components-backgroundLight);
 }
 
+/* .settings {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 11;
+  width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem);
+  margin-right: clamp(
+    0.5rem,
+    -0.52956rem + 4.335vw,
+    9.875rem
+  ); /*image	380	8	PX	3840	158	PX*/
+/* margin-top: clamp(1.5rem, 1.14993rem + 1.474vw, 4.6875rem); 24 75 
+  margin-top: clamp(1.5rem, 1.18436rem + 1.329vw, 4.375rem);
+} */
+.settingsContainer {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  right: 0;
+  z-index: 11;
+  margin-right: clamp(
+    0.25rem,
+    -0.2649rem + 2.168vw,
+    4.9375rem
+  ); /*margin	380	8	PX	3840	158	PX*/
+  height: clamp(3.125rem, 2.91909rem + 0.867vw, 5rem);
+  width: clamp(3.125rem, 2.91909rem + 0.867vw, 5rem);
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+}
+
+.settings {
+  width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem);
+}
+
 @media (max-width: 991.98px) {
   body {
     /* height: 118vh; */
@@ -141,5 +179,16 @@ footer a {
   }
   footer a {
     margin: 2px;
+  }
+
+  .settingsContainer {
+    right: 4%;
+    top: 6%;
+  }
+}
+
+@media (min-height: 1200px) {
+  body {
+    height: 100vh;
   }
 }
