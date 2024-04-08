@@ -10,8 +10,6 @@ currentWeatherTemplate.innerHTML = `
 <style>
 
 :host{
-  --icon-width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
-  --icon-height: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem); /*image	380	24	PX	3840	36*/
   --search-font: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
   --input-bkgDark: rgba(0, 0, 0, 0.5);
   --input-bkgLight: rgba(255, 255, 255, 0.5);
@@ -36,7 +34,7 @@ currentWeatherTemplate.innerHTML = `
     left: 16px;
     bottom: 0;
     width: var(--icon-width);
-    height: var(--icon-height);
+    height: var(--icon-width);
     background: url("./images/map-pin.svg") center / contain no-repeat;
     z-index:1;
   }
@@ -47,7 +45,7 @@ currentWeatherTemplate.innerHTML = `
     right: 50px;
     bottom: 0px;
     width: var(--icon-width);
-    height: var(--icon-height);
+    height: var(--icon-width);
     background: url("./images/x-circle-fill.svg") center / contain no-repeat;
     z-index:1;
   }
@@ -209,34 +207,33 @@ currentWeatherTemplate.innerHTML = `
 </style>
 <div class="currentWeatherContainer">
 <div id="search-container">
-<label>
-<span class="pin"></span>
-<input
-  type="text"
-  name="location"
-  id="search-location"
-  placeholder="Enter your City"
-/>
-<span class="clearText"></span>
-</label>
-<div id="search-dropdown">
-</div>
+  <label>
+    <span class="pin"></span>
+    <input
+      type="text"
+      name="location"
+      id="search-location"
+      placeholder="Enter your City"
+    />
+    <span class="clearText"></span>
+  </label>
+  <div id="search-dropdown"></div>
 </div>
 <p class="medium" id="nowText">Now</p>
 <div class="loaderContainer">
-<span class="loader"></span>
+  <span class="loader"></span>
 </div>
 <div id="currentTempContainer">
-<div class="currentTemp">
-  <p class="large" temp=""></p>
-  <img id="weatherIcon" src="" alt=""/>
-</div>
+  <div class="currentTemp">
+    <p class="large" temp=""></p>
+    <img id="weatherIcon" src="" alt="" />
+  </div>
 
-<div class="currentConditions">
-  <p class="medium" text="">Mist</p>
-  <p class="small">Feels like: <span feelsLike=""></span></p>
-  <p class="small">Wind: <span wind=""></span></p>
-</div>
+  <div class="currentConditions">
+    <p class="medium" text="">Mist</p>
+    <p class="small">Feels like: <span feelsLike=""></span></p>
+    <p class="small">Wind: <span wind=""></span></p>
+  </div>
 </div>
 </div>`;
 
@@ -314,13 +311,14 @@ class CurrentConditions extends HTMLElement {
   }
 
   locationLookup(value) {
-    if (!this.locationInput.value) {
-      this.fetchDataUpdateUI();
-      //return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
-    } else {
-      this.fetchDataUpdateUI(value);
-      //return this.render(value); //If a value exists it will pass the value to the render function
-    }
+    // if (!this.locationInput.value) {
+    //   this.fetchDataUpdateUI();
+    //   //return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
+    // } else {
+    //   this.fetchDataUpdateUI(value);
+    //   //return this.render(value); //If a value exists it will pass the value to the render function
+    // }
+    this.fetchDataUpdateUI(value);
   }
 
   // createDropdownList() {

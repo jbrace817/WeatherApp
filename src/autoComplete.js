@@ -50,6 +50,7 @@ class AutoComplete {
     this.current.clearIcon.addEventListener('click', () => {
       this.current.locationInput.value = '';
       this.current.clearIcon.style.visibility = 'hidden';
+      this.current.dropdownList.style.visibility = 'hidden';
     });
   }
 
@@ -57,7 +58,11 @@ class AutoComplete {
     div.addEventListener('click', (e) => {
       this.current.dropdownList.style.visibility = 'hidden';
       this.current.locationInput.value = `${name}, ${region}`;
-      this.current.locationLookup(this.current.locationInput.value);
+      if (!this.current.locationLookup) {
+        return null;
+      } else {
+        this.current.locationLookup(this.current.locationInput.value);
+      }
     });
   }
 
@@ -109,7 +114,12 @@ class AutoComplete {
         }
         this.current.locationInput.value = indexValue;
         this.current.dropdownList.style.visibility = 'hidden';
-        return this.current.locationLookup(indexValue);
+        // return this.current.locationLookup(indexValue);
+        if (!this.current.locationLookup) {
+          return null;
+        } else {
+          return this.current.locationLookup(indexValue);
+        }
       } else {
         index = -1;
       }

@@ -36,6 +36,11 @@
     0.90381rem + 0.405vw,
     1.875rem
   ); /*p	380	16	PX	3840  30PX */
+  --icon-width: clamp(
+    1.5rem,
+    1.41759rem + 0.347vw,
+    2.25rem
+  ); /*image	380	24	PX	3840	36*/
 }
 
 body.lightMode {
@@ -144,7 +149,18 @@ footer a {
 }
 
 .settings {
-  width: clamp(1.5rem, 1.41759rem + 0.347vw, 2.25rem);
+  width: var(--icon-width);
+}
+
+saved-locations {
+  position: absolute;
+  height: 100%;
+  width: 100vw;
+  backdrop-filter: blur(6px);
+  top: 0;
+  left: 0;
+  z-index: 12;
+  visibility: visible;
 }
 
 @media (max-width: 991.98px) {
