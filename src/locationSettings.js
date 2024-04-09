@@ -153,8 +153,16 @@ p {
   .savedItem img {
     width: var(--icon-width);
     height: var(--icon-width);
-    
-    
+  }
+  .star {
+    width: var(--icon-width);
+    height: var(--icon-width);
+    background: url("./images/star.svg");
+  }
+  .goldStar {
+    width: var(--icon-width);
+    height: var(--icon-width);
+    background: url("./images/star-fill.svg");
   }
 
   @media (max-width: 991.98px) {
@@ -253,13 +261,13 @@ class LocationSettings extends HTMLElement {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     const savedLocationsDiv = document.createElement('div');
     const removeLocation = document.createElement('img');
-    const favorite = document.createElement('img');
+    const favorite = document.createElement('div');
     const pElement = document.createElement('p');
     savedLocationsDiv.classList.add('savedItem');
     pElement.innerHTML = lookupInput;
     removeLocation.src = './images/x-circle-fill.svg';
     removeLocation.classList.add('removeSavedLocation');
-    favorite.src = './images/star.svg';
+    favorite.classList.add('star');
     saved.appendChild(savedLocationsDiv);
     savedLocationsDiv.appendChild(pElement);
     savedLocationsDiv.appendChild(removeLocation);
@@ -282,10 +290,47 @@ class LocationSettings extends HTMLElement {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     saved.addEventListener('click', (event) => {
       if (event.target.className === 'removeSavedLocation') {
-        console.log(event.target.parentElement.remove());
+        event.target.parentElement.remove();
         this.localCache.removeFromStorage(
           event.target.previousElementSibling.textContent,
         );
+        this.localCache.setFavorite('');
+      }
+    });
+  }
+
+  favorite() {
+    const saved = this.shadowRoot.querySelector('.savedContainer');
+
+    saved.addEventListener('click', (event) => {
+      let goldStar = saved.getElementsByClassName('goldStar');
+      let target = event.target.classList;
+
+      if (!target.contains('star')) {
+        return;
+      }
+
+      let city =
+        event.target.previousElementSibling.previousElementSibling.textContent;
+
+      if (goldStar.length === 0) {
+        target.add('goldStar');
+        this.localCache.setFavorite(city);
+      } else if (target.contains('goldStar')) {
+        target.remove('goldStar');
+        this.localCache.setFavorite('');
+      } else if (goldStar.length) {
+        goldStar[0].classList.remove('goldStar');
+        target.add('goldStar');
+        this.localCache.setFavorite(city);
+      }
+    });
+
+    [...saved.children].forEach((value) => {
+      if (
+        value.children.item('p').textContent === this.localCache.getFavorite()
+      ) {
+        value.children[2].classList.add('goldStar');
       }
     });
   }
@@ -297,6 +342,7 @@ class LocationSettings extends HTMLElement {
     this.addToUI();
     this.closeModalWindow();
     this.removeFromUI();
+    this.favorite();
   }
 }
 
@@ -316,7 +362,7 @@ class LocalCache {
     const parsed = JSON.parse(savedLocations);
     return parsed;
   }
-  stringify(location) {
+  stringify() {
     // this.savedLocationsArray.push(location);
     const stringifiedLocations = JSON.stringify(this.savedLocationsArray);
     localStorage.setItem('locations', stringifiedLocations);
@@ -331,6 +377,16 @@ class LocalCache {
     this.stringify();
     console.log(this.parseLocations());
     console.log(this.savedLocationsArray);
+  }
+
+  setFavorite(string) {
+    let favorite = JSON.stringify(string);
+    localStorage.setItem('favorite', favorite);
+  }
+
+  getFavorite() {
+    let favorite = localStorage.getItem('favorite');
+    return JSON.parse(favorite);
   }
 }
 
