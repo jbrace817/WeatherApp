@@ -5,6 +5,7 @@ import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { HourlyScroll } from './hourlyScroll';
 import { DailyForecast } from './dailyForecast';
+import { LocalCache } from './locationSettings';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -318,142 +319,28 @@ class CurrentConditions extends HTMLElement {
     //   this.fetchDataUpdateUI(value);
     //   //return this.render(value); //If a value exists it will pass the value to the render function
     // }
-    this.fetchDataUpdateUI(value);
+    const storage = new LocalCache();
+    if (storage.getFavorite() && storage.getSaved()) {
+      this.updateAppFromStorage(storage.getSaved());
+      storage.setSaved('');
+    } else if (storage.getFavorite()) {
+      this.updateAppFromStorage(storage.getFavorite(), value);
+    } else if (storage.getSaved()) {
+      this.updateAppFromStorage(storage.getSaved(), value);
+    } else {
+      this.fetchDataUpdateUI(value);
+    }
   }
 
-  // createDropdownList() {
-  //   //Allows user to click the value in dropdown
-  //   this.locationInput.addEventListener('input', (e) => {
-  //     this.clearLocationInputValue(e.target.value); //Reveals button to clear text when input detected
-  //     if (!e.target.value) {
-  //       this.dropdownList.style.visibility = 'hidden';
-  //     } else {
-  //       todaysWeather.autoCompleteList(e.target.value).then((data) => {
-  //         this.dropdownList.innerHTML = '';
-  //         if (data.length > 0) {
-  //           this.dropdownList.style.visibility = 'visible';
-  //           data.forEach((value) => {
-  //             // console.log(value);
-  //             // console.log(value.name, value.region, value.country);
-  //             const specificLocation = document.createElement('div');
-  //             specificLocation.classList.add('dropdownValue');
-  //             specificLocation.setAttribute('name', value.name);
-  //             specificLocation.setAttribute('region', value.region);
-  //             specificLocation.innerHTML = `${value.name}, ${value.region}, ${value.country}`;
-  //             this.dropdownList.appendChild(specificLocation);
-  //             //Event listener for clicking the location in the dropdown
-  //             this.selectLocationByClick(
-  //               specificLocation,
-  //               value.name,
-  //               value.region,
-  //             );
-  //           });
-  //         } else {
-  //           this.dropdownList.style.visibility = 'hidden';
-  //         }
-  //         // console.log(data);
-  //       });
-  //     }
-  //     // console.log(e.target.value);
-  //   });
-  // }
-
-  // selectLocationByClick(div, name, region) {
-  //   div.addEventListener('click', (e) => {
-  //     this.dropdownList.style.visibility = 'hidden';
-  //     this.locationInput.value = `${name}, ${region}`;
-  //     this.render(this.locationInput.value);
-  //   });
-  // }
-
-  // selectLocationsByKeydown() {
-  //   //Allows use of keyboard to select location values
-  //   let index = -1;
-  //   let prevIndex;
-
-  //   this.locationInput.addEventListener('keydown', (e) => {
-  //     const allLocationValues =
-  //       this.shadowRoot.querySelectorAll('.dropdownValue');
-  //     if (allLocationValues.length <= 0) {
-  //       return;
-  //     }
-  //     //Traverses location list up
-  //     if (e.key === 'ArrowUp') {
-  //       e.preventDefault();
-  //       reverseListSelection();
-  //       this.shadowRoot.querySelector('.selected').scrollIntoView();
-  //     } else if (e.shiftKey) {
-  //       //Traverses location list up using shift + tab
-  //       e.preventDefault();
-  //       if (e.key === 'Tab') {
-  //         reverseListSelection();
-  //         this.shadowRoot.querySelector('.selected').scrollIntoView();
-  //       }
-  //     } else if (e.key === 'Tab' || e.key === 'ArrowDown') {
-  //       //Traverses location list down
-  //       e.preventDefault();
-  //       index++;
-  //       prevIndex = index - 1;
-  //       if (index > allLocationValues.length - 1) {
-  //         index = 0;
-  //         prevIndex = allLocationValues.length - 1;
-  //       }
-  //       allLocationValues[index].classList.add('selected');
-  //       if (prevIndex >= 0 && allLocationValues.length > 1) {
-  //         allLocationValues[prevIndex].classList.remove('selected');
-  //         console.log(allLocationValues.length);
-  //       }
-
-  //       this.shadowRoot.querySelector('.selected').scrollIntoView();
-  //     } else if (e.key === 'Enter') {
-  //       let indexValue = '';
-  //       if (allLocationValues[index]) {
-  //         indexValue = `${allLocationValues[index].getAttribute('name')}, ${allLocationValues[index].getAttribute('region')}`;
-  //       } else {
-  //         indexValue = `${allLocationValues[0].getAttribute('name')}, ${allLocationValues[0].getAttribute('region')}`;
-  //       }
-  //       this.locationInput.value = indexValue;
-  //       this.dropdownList.style.visibility = 'hidden';
-  //       return this.locationLookup(indexValue);
-  //     } else {
-  //       index = -1;
-  //     }
-
-  //     function reverseListSelection() {
-  //       if (index === -1) {
-  //         // console.log(index - 1);
-  //         index++;
-  //         console.log(index);
-  //       }
-  //       index--;
-  //       prevIndex = index + 1;
-  //       if (index < 0) {
-  //         index = allLocationValues.length - 1;
-  //       }
-  //       allLocationValues[index].classList.add('selected');
-  //       console.log(prevIndex);
-  //       // allLocationValues[prevIndex].classList.remove('selected');
-  //       if (prevIndex >= 0 && allLocationValues.length > 1) {
-  //         allLocationValues[prevIndex].classList.remove('selected');
-  //       }
-  //     }
-  //   });
-
-  //   // console.log(length);
-  // }
-
-  // clearLocationInputValue(e) {
-  //   const clearIcon = this.shadowRoot.querySelector('.clearText');
-  //   if (!e) {
-  //     clearIcon.style.visibility = 'hidden';
-  //   } else {
-  //     clearIcon.style.visibility = 'visible';
-  //   }
-  //   clearIcon.addEventListener('click', (e) => {
-  //     this.locationInput.value = '';
-  //     clearIcon.style.visibility = 'hidden';
-  //   });
-  // }
+  updateAppFromStorage(storage, value) {
+    this.fetchDataUpdateUI(storage)
+      .then(() => {
+        this.fetchDataUpdateUI(storage);
+      })
+      .catch(() => {
+        this.fetchDataUpdateUI(value);
+      });
+  }
 
   getGeolocationMapPin() {
     const mapPin = this.shadowRoot.querySelector('.pin');

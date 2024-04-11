@@ -202,7 +202,7 @@ p {
 `;
 
 class LocationSettings extends HTMLElement {
-  constructor() {
+  constructor(current) {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(savedLocationTemplate.content.cloneNode(true));
@@ -238,8 +238,11 @@ class LocationSettings extends HTMLElement {
     const addButton = this.shadowRoot.querySelector('.addButton');
     addButton.addEventListener('click', () => {
       const noDuplicates = this.localCache.parseLocations();
-      console.log(noDuplicates);
-      if (!this.lookupInput.value) {
+      console.log(!this.lookupInput.value.match(/^[^,]*,[^,]*$/g));
+      if (
+        !this.lookupInput.value ||
+        !this.lookupInput.value.match(/^[^,]*,[^,]*$/g)
+      ) {
         return;
       } else if (
         noDuplicates &&
@@ -276,7 +279,7 @@ class LocationSettings extends HTMLElement {
 
   renderLocalStorage() {
     const locationsInStorage = this.localCache.parseLocations();
-    if (!localStorage.length) {
+    if (!locationsInStorage) {
       return;
     } else {
       locationsInStorage.forEach((value) => {
@@ -316,6 +319,7 @@ class LocationSettings extends HTMLElement {
       if (goldStar.length === 0) {
         target.add('goldStar');
         this.localCache.setFavorite(city);
+        this.refreshComponent();
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
         this.localCache.setFavorite('');
@@ -323,6 +327,7 @@ class LocationSettings extends HTMLElement {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
         this.localCache.setFavorite(city);
+        this.refreshComponent();
       }
     });
 
@@ -335,6 +340,21 @@ class LocationSettings extends HTMLElement {
     });
   }
 
+  viewOtherSavedLocations() {
+    const saved = this.shadowRoot.querySelector('.savedContainer');
+    saved.addEventListener('click', (event) => {
+      if (event.target.tagName === 'P') {
+        this.localCache.setSaved(event.target.textContent);
+        this.refreshComponent();
+      }
+    });
+  }
+  refreshComponent() {
+    const component = document.createElement('current-conditions');
+    document.querySelector('current-conditions').remove();
+    document.querySelector('.container').append(component);
+  }
+
   connectedCallback() {
     this.autoComplete.createDrowpdownList();
     this.autoComplete.selectLocationsByKeydown();
@@ -343,6 +363,7 @@ class LocationSettings extends HTMLElement {
     this.closeModalWindow();
     this.removeFromUI();
     this.favorite();
+    this.viewOtherSavedLocations();
   }
 }
 
@@ -388,6 +409,15 @@ class LocalCache {
     let favorite = localStorage.getItem('favorite');
     return JSON.parse(favorite);
   }
+
+  setSaved(string) {
+    let saved = JSON.stringify(string);
+    localStorage.setItem('saved', saved);
+  }
+  getSaved() {
+    let saved = localStorage.getItem('saved');
+    return JSON.parse(saved);
+  }
 }
 
-export { LocationSettings };
+export { LocationSettings, LocalCache };
