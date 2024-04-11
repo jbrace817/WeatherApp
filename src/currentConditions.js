@@ -320,13 +320,18 @@ class CurrentConditions extends HTMLElement {
     //   //return this.render(value); //If a value exists it will pass the value to the render function
     // }
     const storage = new LocalCache();
-    if (storage.getFavorite() && storage.getSaved()) {
-      this.updateAppFromStorage(storage.getSaved());
-      storage.setSaved('');
-    } else if (storage.getFavorite()) {
-      this.updateAppFromStorage(storage.getFavorite(), value);
-    } else if (storage.getSaved()) {
-      this.updateAppFromStorage(storage.getSaved(), value);
+
+    //Keys for storage
+    const favorite = 'favorite';
+    const view = 'view';
+
+    if (storage.getParse(favorite) && storage.getParse(view)) {
+      this.updateAppFromStorage(storage.getParse(view));
+      storage.setStringify(view, null);
+    } else if (storage.getParse(favorite)) {
+      this.updateAppFromStorage(storage.getParse(favorite), value);
+    } else if (storage.getParse(view)) {
+      this.updateAppFromStorage(storage.getParse(view), value);
     } else {
       this.fetchDataUpdateUI(value);
     }

@@ -142,6 +142,7 @@ p {
     padding: 5px;
     justify-content: space-between;
     width: 100%;
+    cursor: pointer;
   }
 
   .savedItem p{
@@ -210,9 +211,13 @@ class LocationSettings extends HTMLElement {
     this.dropdownList = this.shadowRoot.getElementById('dropdown'); //retrieves <div> of location values
     this.clearIcon = this.shadowRoot.querySelector('.clearText');
     this.lookupInput = this.shadowRoot.getElementById('lookup');
-    // this.savedLocationsArray = [];
     this.localCache = new LocalCache();
     this.autoComplete = new AutoComplete(this);
+
+    //Storage Keys
+    this.locationArray = 'locations';
+    this.favoriteLocation = 'favorite';
+    this.viewed = 'view';
   }
 
   closeModalWindow() {
@@ -237,7 +242,7 @@ class LocationSettings extends HTMLElement {
   addToUI() {
     const addButton = this.shadowRoot.querySelector('.addButton');
     addButton.addEventListener('click', () => {
-      const noDuplicates = this.localCache.parseLocations();
+      const noDuplicates = this.localCache.getParse(this.locationArray);
       console.log(!this.lookupInput.value.match(/^[^,]*,[^,]*$/g));
       if (
         !this.lookupInput.value ||
@@ -259,7 +264,7 @@ class LocationSettings extends HTMLElement {
     });
   }
 
-  //Renders the UI.
+  //Renders the UI
   renderSavedLocations(lookupInput) {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     const savedLocationsDiv = document.createElement('div');
@@ -278,7 +283,7 @@ class LocationSettings extends HTMLElement {
   }
 
   renderLocalStorage() {
-    const locationsInStorage = this.localCache.parseLocations();
+    const locationsInStorage = this.localCache.getParse(this.locationArray);
     if (!locationsInStorage) {
       return;
     } else {
@@ -297,7 +302,7 @@ class LocationSettings extends HTMLElement {
         this.localCache.removeFromStorage(
           event.target.previousElementSibling.textContent,
         );
-        this.localCache.setFavorite('');
+        this.localCache.setStringify(this.favoriteLocation, null);
       }
     });
   }
@@ -318,22 +323,23 @@ class LocationSettings extends HTMLElement {
 
       if (goldStar.length === 0) {
         target.add('goldStar');
-        this.localCache.setFavorite(city);
+        this.localCache.setStringify(this.favoriteLocation, city);
         this.refreshComponent();
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
-        this.localCache.setFavorite('');
+        this.localCache.setStringify(this.favoriteLocation, null);
       } else if (goldStar.length) {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
-        this.localCache.setFavorite(city);
+        this.localCache.setStringify(this.favoriteLocation, city);
         this.refreshComponent();
       }
     });
 
     [...saved.children].forEach((value) => {
       if (
-        value.children.item('p').textContent === this.localCache.getFavorite()
+        value.children.item('p').textContent ===
+        this.localCache.getParse(this.favoriteLocation)
       ) {
         value.children[2].classList.add('goldStar');
       }
@@ -344,7 +350,7 @@ class LocationSettings extends HTMLElement {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     saved.addEventListener('click', (event) => {
       if (event.target.tagName === 'P') {
-        this.localCache.setSaved(event.target.textContent);
+        this.localCache.setStringify(this.viewed, event.target.textContent);
         this.refreshComponent();
       }
     });
@@ -372,51 +378,43 @@ class LocalCache {
     this.savedLocationsArray = [];
   }
   addToLocalStorage(lookupInput) {
-    this.savedLocationsArray = this.parseLocations() || [];
+    this.savedLocationsArray = this.getParse() || [];
     console.log(lookupInput);
     console.log(typeof this.savedLocationsArray);
     this.savedLocationsArray.push(lookupInput);
-    this.stringify();
+    this.setStringify();
   }
-  parseLocations() {
-    const savedLocations = localStorage.getItem('locations');
-    const parsed = JSON.parse(savedLocations);
-    return parsed;
+  getParse(key) {
+    if (!key) {
+      const allLocations = localStorage.getItem('locations');
+      const parsed = JSON.parse(allLocations);
+      return parsed;
+    } else {
+      const item = localStorage.getItem(key);
+      const parsed = JSON.parse(item);
+      return parsed;
+    }
   }
-  stringify() {
-    // this.savedLocationsArray.push(location);
-    const stringifiedLocations = JSON.stringify(this.savedLocationsArray);
-    localStorage.setItem('locations', stringifiedLocations);
-    console.log(this.savedLocationsArray);
+
+  setStringify(key, location) {
+    if (!key) {
+      const stringifiedLocations = JSON.stringify(this.savedLocationsArray);
+      localStorage.setItem('locations', stringifiedLocations);
+      console.log(this.savedLocationsArray);
+    } else {
+      let value = JSON.stringify(location);
+      localStorage.setItem(key, value);
+    }
   }
 
   removeFromStorage(string) {
-    let index = this.parseLocations().indexOf(string);
-    this.savedLocationsArray = this.parseLocations();
+    let index = this.getParse().indexOf(string);
+    this.savedLocationsArray = this.getParse();
     console.log(this.savedLocationsArray);
     this.savedLocationsArray.splice(index, 1);
-    this.stringify();
-    console.log(this.parseLocations());
+    this.setStringify();
+    console.log(this.getParse());
     console.log(this.savedLocationsArray);
-  }
-
-  setFavorite(string) {
-    let favorite = JSON.stringify(string);
-    localStorage.setItem('favorite', favorite);
-  }
-
-  getFavorite() {
-    let favorite = localStorage.getItem('favorite');
-    return JSON.parse(favorite);
-  }
-
-  setSaved(string) {
-    let saved = JSON.stringify(string);
-    localStorage.setItem('saved', saved);
-  }
-  getSaved() {
-    let saved = localStorage.getItem('saved');
-    return JSON.parse(saved);
   }
 }
 
