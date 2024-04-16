@@ -170,6 +170,10 @@ p {
     .addButton {
         bottom: 0;
     }
+
+    .locationModal{
+      height: 45vh;
+    }
   }
 
 </style>
@@ -213,6 +217,7 @@ class LocationSettings extends HTMLElement {
     this.lookupInput = this.shadowRoot.getElementById('lookup');
     this.localCache = new LocalCache();
     this.autoComplete = new AutoComplete(this);
+    this.currentConditions = new CurrentConditions();
 
     //Storage Keys
     this.locationArray = 'locations';
@@ -223,9 +228,11 @@ class LocationSettings extends HTMLElement {
   closeModalWindow() {
     const exitModal = this.shadowRoot.querySelector('.exitModal');
     exitModal.addEventListener('click', () => {
-      //   const savedLocations = document.querySelector('saved-locations');
-      //   savedLocations.style.visibility = 'hidden';
-      this.prefillLookup();
+      this.clearIcon.style.visibility = 'hidden';
+      this.localCache.setStringify(this.viewed, null);
+      const savedLocations = document.querySelector('saved-locations');
+      savedLocations.style.visibility = 'hidden';
+      // this.prefillLookup();
     });
   }
 
@@ -324,6 +331,7 @@ class LocationSettings extends HTMLElement {
       if (goldStar.length === 0) {
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
+        this.localCache.setStringify('clicked', 'star');
         this.refreshComponent();
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
@@ -332,6 +340,7 @@ class LocationSettings extends HTMLElement {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
+        this.localCache.setStringify('clicked', 'star');
         this.refreshComponent();
       }
     });
@@ -351,6 +360,7 @@ class LocationSettings extends HTMLElement {
     saved.addEventListener('click', (event) => {
       if (event.target.tagName === 'P') {
         this.localCache.setStringify(this.viewed, event.target.textContent);
+        this.localCache.setStringify('clicked', 'P');
         this.refreshComponent();
       }
     });

@@ -17,3 +17,9 @@ window.customElements.define('current-dashboard', Dashboard);
 window.customElements.define('hourly-scroll', HourlyScroll);
 window.customElements.define('daily-forecast', DailyForecast);
 window.customElements.define('saved-locations', LocationSettings);
+
+const settingsBtn = document.querySelector('.settings');
+settingsBtn.addEventListener('click', () => {
+  const settingsModal = document.querySelector('saved-locations');
+  settingsModal.style.visibility = 'visible';
+});

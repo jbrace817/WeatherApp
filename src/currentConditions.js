@@ -287,7 +287,7 @@ class CurrentConditions extends HTMLElement {
     const metric = '&deg;C'; // celsius
     const mph = 'mph'; //miles per hour
     const kph = 'kph'; //kilometers
-    //console.log(currentTemp);
+    console.log(currentTemp);
 
     this.loaderContainer.style.display = 'none';
     this.currentTempContainer.style.display = 'block';
@@ -319,32 +319,47 @@ class CurrentConditions extends HTMLElement {
     //   this.fetchDataUpdateUI(value);
     //   //return this.render(value); //If a value exists it will pass the value to the render function
     // }
+
     const storage = new LocalCache();
 
     //Keys for storage
     const favorite = 'favorite';
     const view = 'view';
 
-    if (storage.getParse(favorite) && storage.getParse(view)) {
-      this.updateAppFromStorage(storage.getParse(view));
-      storage.setStringify(view, null);
-    } else if (storage.getParse(favorite)) {
-      this.updateAppFromStorage(storage.getParse(favorite), value);
-    } else if (storage.getParse(view)) {
-      this.updateAppFromStorage(storage.getParse(view), value);
-    } else {
+    const settingsVisible = document.querySelector('saved-locations');
+    if (storage.getParse('clicked') === 'P') {
+      console.log(storage.getParse(view));
+      storage.setStringify('clicked', null);
+      this.fetchDataUpdateUI(storage.getParse(view));
+    } else if (storage.getParse('clicked') === 'star') {
+      console.log(storage.getParse(favorite));
+      this.fetchDataUpdateUI(storage.getParse(favorite));
+      storage.setStringify('clicked', null);
+    } else if (this.locationInput.value) {
+      console.log(this.locationInput.value);
       this.fetchDataUpdateUI(value);
+    } else {
+      this.initialLoad();
     }
   }
 
-  updateAppFromStorage(storage, value) {
-    this.fetchDataUpdateUI(storage)
-      .then(() => {
-        this.fetchDataUpdateUI(storage);
-      })
-      .catch(() => {
-        this.fetchDataUpdateUI(value);
-      });
+  initialLoad() {
+    window.addEventListener(
+      'load',
+      () => {
+        const storage = new LocalCache();
+        //Keys for storage
+        const favorite = 'favorite';
+        const view = 'view';
+        console.log('ran');
+        if (storage.getParse(favorite)) {
+          this.fetchDataUpdateUI(storage.getParse(favorite));
+        } else {
+          this.fetchDataUpdateUI();
+        }
+      },
+      { once: true },
+    );
   }
 
   getGeolocationMapPin() {
