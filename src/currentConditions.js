@@ -312,30 +312,7 @@ class CurrentConditions extends HTMLElement {
   }
 
   locationLookup(value) {
-    // if (!this.locationInput.value) {
-    //   this.fetchDataUpdateUI();
-    //   //return this.render(); //If no value exists, it will use Geolocation API or default to New York, New York if denied
-    // } else {
-    //   this.fetchDataUpdateUI(value);
-    //   //return this.render(value); //If a value exists it will pass the value to the render function
-    // }
-
-    const storage = new LocalCache();
-
-    //Keys for storage
-    const favorite = 'favorite';
-    const view = 'view';
-
-    const settingsVisible = document.querySelector('saved-locations');
-    if (storage.getParse('clicked') === 'P') {
-      console.log(storage.getParse(view));
-      storage.setStringify('clicked', null);
-      this.fetchDataUpdateUI(storage.getParse(view));
-    } else if (storage.getParse('clicked') === 'star') {
-      console.log(storage.getParse(favorite));
-      this.fetchDataUpdateUI(storage.getParse(favorite));
-      storage.setStringify('clicked', null);
-    } else if (this.locationInput.value) {
+    if (value) {
       console.log(this.locationInput.value);
       this.fetchDataUpdateUI(value);
     } else {
@@ -350,7 +327,6 @@ class CurrentConditions extends HTMLElement {
         const storage = new LocalCache();
         //Keys for storage
         const favorite = 'favorite';
-        const view = 'view';
         console.log('ran');
         if (storage.getParse(favorite)) {
           this.fetchDataUpdateUI(storage.getParse(favorite));
@@ -366,7 +342,7 @@ class CurrentConditions extends HTMLElement {
     const mapPin = this.shadowRoot.querySelector('.pin');
     mapPin.addEventListener('click', () => {
       this.locationInput.value = '';
-      this.locationLookup();
+      this.fetchDataUpdateUI();
     });
   }
 

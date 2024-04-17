@@ -222,17 +222,16 @@ class LocationSettings extends HTMLElement {
     //Storage Keys
     this.locationArray = 'locations';
     this.favoriteLocation = 'favorite';
-    this.viewed = 'view';
+    // this.viewed = 'view';
   }
 
   closeModalWindow() {
     const exitModal = this.shadowRoot.querySelector('.exitModal');
     exitModal.addEventListener('click', () => {
       this.clearIcon.style.visibility = 'hidden';
-      this.localCache.setStringify(this.viewed, null);
+      // this.localCache.setStringify(this.viewed, null);
       const savedLocations = document.querySelector('saved-locations');
       savedLocations.style.visibility = 'hidden';
-      // this.prefillLookup();
     });
   }
 
@@ -241,6 +240,7 @@ class LocationSettings extends HTMLElement {
     const input = document
       .querySelector('current-conditions')
       .shadowRoot.getElementById('search-location').value;
+    console.log(input);
     this.lookupInput.value = input;
     this.autoComplete.clearLocationInputValue(this.lookupInput.value);
   }
@@ -331,8 +331,8 @@ class LocationSettings extends HTMLElement {
       if (goldStar.length === 0) {
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
-        this.localCache.setStringify('clicked', 'star');
-        this.refreshComponent();
+        // this.localCache.setStringify('clicked', 'star');
+        this.refreshComponent(city);
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
         this.localCache.setStringify(this.favoriteLocation, null);
@@ -340,8 +340,8 @@ class LocationSettings extends HTMLElement {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
-        this.localCache.setStringify('clicked', 'star');
-        this.refreshComponent();
+        // this.localCache.setStringify('clicked', 'star');
+        this.refreshComponent(city);
       }
     });
 
@@ -359,21 +359,25 @@ class LocationSettings extends HTMLElement {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     saved.addEventListener('click', (event) => {
       if (event.target.tagName === 'P') {
-        this.localCache.setStringify(this.viewed, event.target.textContent);
-        this.localCache.setStringify('clicked', 'P');
-        this.refreshComponent();
+        // this.localCache.setStringify(this.viewed, event.target.textContent);
+        // this.localCache.setStringify('clicked', 'P');
+        this.refreshComponent(event.target.textContent);
       }
     });
   }
-  refreshComponent() {
-    const component = document.createElement('current-conditions');
-    document.querySelector('current-conditions').remove();
-    document.querySelector('.container').append(component);
+  refreshComponent(location) {
+    // const component = document.createElement('current-conditions');
+    // document.querySelector('current-conditions').remove();
+    // document.querySelector('.container').append(component);
+    const component = document.querySelector('current-conditions');
+    component.locationLookup(location);
+    component.locationInput.value = location;
   }
 
   connectedCallback() {
     this.autoComplete.createDrowpdownList();
     this.autoComplete.selectLocationsByKeydown();
+    this.prefillLookup();
     this.renderLocalStorage();
     this.addToUI();
     this.closeModalWindow();
