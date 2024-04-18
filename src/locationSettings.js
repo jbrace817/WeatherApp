@@ -104,11 +104,11 @@ p {
 
   .dropdownValue:hover{
     cursor: pointer;
-    background-color: #858585b3;
+    background-color: var(--hover-color);
   }
 
   .selected {
-    background-color: #858585b3;
+    background-color: var(--hover-color);
   }
 
   .clearText {
@@ -132,7 +132,7 @@ p {
     grid-area: 4/1/5/2;
     height: 100%;
     width: 100%;
-    border: 1px solid #858585b3;
+    border: 1px solid var(--hover-color);
     border-radius: 10px;
     
   }
@@ -172,7 +172,11 @@ p {
     }
 
     .locationModal{
-      height: 45vh;
+      height: 44vh;
+    }
+
+    #lookup{
+      width: 88%;
     }
   }
 
@@ -207,7 +211,7 @@ p {
 `;
 
 class LocationSettings extends HTMLElement {
-  constructor(current) {
+  constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(savedLocationTemplate.content.cloneNode(true));
@@ -217,31 +221,29 @@ class LocationSettings extends HTMLElement {
     this.lookupInput = this.shadowRoot.getElementById('lookup');
     this.localCache = new LocalCache();
     this.autoComplete = new AutoComplete(this);
-    this.currentConditions = new CurrentConditions();
+    this.currentConditionsComponent =
+      document.querySelector('current-conditions'); //<current-conditions> object
 
     //Storage Keys
     this.locationArray = 'locations';
     this.favoriteLocation = 'favorite';
-    // this.viewed = 'view';
   }
 
   closeModalWindow() {
     const exitModal = this.shadowRoot.querySelector('.exitModal');
     exitModal.addEventListener('click', () => {
       this.clearIcon.style.visibility = 'hidden';
-      // this.localCache.setStringify(this.viewed, null);
       const savedLocations = document.querySelector('saved-locations');
       savedLocations.style.visibility = 'hidden';
+      this.dropdownList.style.visibility = 'hidden';
     });
   }
 
   //Prefills the input with the location from the previous screen
   prefillLookup() {
-    const input = document
-      .querySelector('current-conditions')
-      .shadowRoot.getElementById('search-location').value;
-    console.log(input);
-    this.lookupInput.value = input;
+    const mainAppInput = this.currentConditionsComponent.locationInput.value;
+    console.log(mainAppInput);
+    this.lookupInput.value = mainAppInput;
     this.autoComplete.clearLocationInputValue(this.lookupInput.value);
   }
 
@@ -289,6 +291,7 @@ class LocationSettings extends HTMLElement {
     savedLocationsDiv.appendChild(favorite);
   }
 
+  //renders each location saved in locaStorage to the UI when the window is opened
   renderLocalStorage() {
     const locationsInStorage = this.localCache.getParse(this.locationArray);
     if (!locationsInStorage) {
@@ -301,7 +304,6 @@ class LocationSettings extends HTMLElement {
   }
 
   removeFromUI() {
-    const removedButton = this.shadowRoot.querySelector('.removeSavedLocation');
     const saved = this.shadowRoot.querySelector('.savedContainer');
     saved.addEventListener('click', (event) => {
       if (event.target.className === 'removeSavedLocation') {
@@ -331,7 +333,6 @@ class LocationSettings extends HTMLElement {
       if (goldStar.length === 0) {
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
-        // this.localCache.setStringify('clicked', 'star');
         this.refreshComponent(city);
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
@@ -340,11 +341,11 @@ class LocationSettings extends HTMLElement {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
         this.localCache.setStringify(this.favoriteLocation, city);
-        // this.localCache.setStringify('clicked', 'star');
         this.refreshComponent(city);
       }
     });
 
+    //applies a gold star to the location saved as a favorite from the localStorage API
     [...saved.children].forEach((value) => {
       if (
         value.children.item('p').textContent ===
@@ -355,23 +356,21 @@ class LocationSettings extends HTMLElement {
     });
   }
 
+  //Allows the user to view other saved locations with out having to change the favorite location
   viewOtherSavedLocations() {
     const saved = this.shadowRoot.querySelector('.savedContainer');
     saved.addEventListener('click', (event) => {
       if (event.target.tagName === 'P') {
-        // this.localCache.setStringify(this.viewed, event.target.textContent);
-        // this.localCache.setStringify('clicked', 'P');
         this.refreshComponent(event.target.textContent);
       }
     });
   }
-  refreshComponent(location) {
-    // const component = document.createElement('current-conditions');
-    // document.querySelector('current-conditions').remove();
-    // document.querySelector('.container').append(component);
-    const component = document.querySelector('current-conditions');
-    component.locationLookup(location);
-    component.locationInput.value = location;
+
+  //refreshes all components to match the location chosen
+  refreshComponent(string) {
+    const currentConditions = this.currentConditionsComponent;
+    currentConditions.locationLookup(string);
+    currentConditions.locationInput.value = string;
   }
 
   connectedCallback() {
@@ -387,17 +386,21 @@ class LocationSettings extends HTMLElement {
   }
 }
 
+//This class access the localStorage API
 class LocalCache {
   constructor() {
-    this.savedLocationsArray = [];
+    this.savedLocationsArray = []; //array of locations in localStorage
   }
+
   addToLocalStorage(lookupInput) {
-    this.savedLocationsArray = this.getParse() || [];
+    this.savedLocationsArray = this.getParse() || []; //gets or creates an array in associated with the 'locations' key
     console.log(lookupInput);
     console.log(typeof this.savedLocationsArray);
     this.savedLocationsArray.push(lookupInput);
     this.setStringify();
   }
+
+  //gets localStorage JSON data by key and parses it to a string
   getParse(key) {
     if (!key) {
       const allLocations = localStorage.getItem('locations');
@@ -410,6 +413,7 @@ class LocalCache {
     }
   }
 
+  //converts data from JavaScript to a JSON String
   setStringify(key, location) {
     if (!key) {
       const stringifiedLocations = JSON.stringify(this.savedLocationsArray);

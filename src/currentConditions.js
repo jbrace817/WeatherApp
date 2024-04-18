@@ -11,7 +11,6 @@ currentWeatherTemplate.innerHTML = `
 <style>
 
 :host{
-  --search-font: clamp(1.25rem, 1.14028rem + 0.462vw, 2.25rem); /*font-size	380	20	PX	3840	36*/
   --input-bkgDark: rgba(0, 0, 0, 0.5);
   --input-bkgLight: rgba(255, 255, 255, 0.5);
   --dropdown-bkgLight: rgba(255, 255, 255, 0.75);
@@ -61,7 +60,7 @@ currentWeatherTemplate.innerHTML = `
     border-radius: 50px;
     background-color: var(--input-bkgLight);
     border-style: none;
-    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem); /* margin	380	14	PX	3840	50	PX */
+    margin-top: var(--margin-top); 
     outline:none;
     padding: 0 37px 0 64px;
     font-size: var(--search-font); 
@@ -104,13 +103,13 @@ currentWeatherTemplate.innerHTML = `
 
   .dropdownValue:hover{
     cursor:pointer;
-    background-color:#858585b3;
+    background-color:var(--hover-color);
   }
   .selected {
-    background-color: #858585b3;
+    background-color: var(--hover-color);
   }
   #nowText{
-    margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+    margin-top: var(--margin-top);
   }
   .large {
     font-size: var(--large-text);
@@ -320,11 +319,13 @@ class CurrentConditions extends HTMLElement {
     }
   }
 
+  //loads favorite location from localStorge if one exists
   initialLoad() {
     window.addEventListener(
       'load',
       () => {
         const storage = new LocalCache();
+
         //Keys for storage
         const favorite = 'favorite';
         console.log('ran');
@@ -370,7 +371,7 @@ class CurrentConditions extends HTMLElement {
     const container = document
       .querySelector('hourly-scroll')
       .shadowRoot.querySelector('.allHours');
-
+    container.scroll(0, 0);
     const dayOne = obj.forecast.forecastday[0].hour;
     const dayTwo = obj.forecast.forecastday[1].hour;
     const timeZone = obj.location.tz_id;
@@ -380,14 +381,18 @@ class CurrentConditions extends HTMLElement {
     container.innerHTML = '';
     for (let i = 0; i < twentyFourHrs.length; i++) {
       if (
+        //zonedTimeToUTC converts the users timezone to UTC time
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) <
         getTime(startOfHour(this.today))
       ) {
+        //ignores time before the start of the hour on users computer
         continue;
       }
       const hour = document.createElement('div');
       hour.classList.add('hour');
-      console.log();
+      console.log(
+        getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)),
+      );
       if (
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) ===
         getTime(startOfHour(this.today))
@@ -395,7 +400,7 @@ class CurrentConditions extends HTMLElement {
         hour.innerHTML = `<p class="time">Now</p>`;
       } else {
         hour.innerHTML = `
-        <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`;
+        <p class="time">${format(parseISO(twentyFourHrs[i].time), 'ha')}</p>`; //'ha' is for hour and AM/PM
       }
       hour.innerHTML += `
       <img src="https://${twentyFourHrs[i].condition.icon}" alt="${twentyFourHrs[i].condition.text}">
@@ -407,7 +412,7 @@ class CurrentConditions extends HTMLElement {
 
   setDailyForecast(data) {
     const container = document.querySelector('.dailyContainer');
-    const currentDayOfweek = format(this.today, 'EEEE');
+    const currentDayOfweek = format(this.today, 'EEEE'); //EEEE is the full name of the day of the week
 
     for (let i = 0; i < container.children.length; i++) {
       let day = container.children[i].shadowRoot.querySelector('.dayOfWeek');
@@ -448,7 +453,6 @@ class CurrentConditions extends HTMLElement {
   connectedCallback() {
     //browser calls this when element is added to the document
     this.autoComplete.selectLocationsByKeydown();
-    // this.createDropdownList();
     this.autoComplete.createDrowpdownList();
     this.getGeolocationMapPin();
     this.locationLookup();

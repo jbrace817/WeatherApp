@@ -41,6 +41,17 @@
     1.41759rem + 0.347vw,
     2.25rem
   ); /*image	380	24	PX	3840	36*/
+  --hover-color: #858585b3;
+  --search-font: clamp(
+    1.25rem,
+    1.14028rem + 0.462vw,
+    2.25rem
+  ); /*font-size	380	20	PX	3840	36*/
+  --margin-top: clamp(
+    0.875rem,
+    0.628rem + 1.04vw,
+    3.125rem
+  ); /* margin	380	14	PX	3840	50	PX */
 }
 
 body.lightMode {
@@ -145,7 +156,12 @@ footer a {
   width: clamp(3.125rem, 2.91909rem + 0.867vw, 5rem);
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 50%;
-  margin-top: clamp(0.875rem, 0.628rem + 1.04vw, 3.125rem);
+  margin-top: var(--margin-top);
+}
+
+.settingsContainer:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
 }
 
 .settings {
