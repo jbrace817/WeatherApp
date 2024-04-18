@@ -167,6 +167,12 @@ footer a {
 .settingsContainer:hover {
   background-color: var(--hover-color);
   cursor: pointer;
+  margin-top: var(--margin-top);
+}
+
+.settingsContainer:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
 }
 
 .settings {
