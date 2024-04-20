@@ -75,7 +75,7 @@ p {
     padding: 0 14% 0 5px;
     background-color: #eee;
     border-style: none;
-    color: var(--lightMode-text);
+    color: inherit;
     height: var(--medium-text);
     border-radius: 6px;
     font-size: var(--small-text);
@@ -91,7 +91,7 @@ p {
     height: 100px;
     margin-left: 2%;
     border-radius: 10px;
-    color: var(--lightMode-text);
+    color: inherit;
     overflow-y: auto;
     visibility: hidden;
     z-index: 2; 

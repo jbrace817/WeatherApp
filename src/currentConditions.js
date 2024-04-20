@@ -11,10 +11,8 @@ currentWeatherTemplate.innerHTML = `
 <style>
 
 :host{
-  --input-bkgDark: rgba(0, 0, 0, 0.5);
   --input-bkgLight: rgba(255, 255, 255, 0.5);
-  --dropdown-bkgLight: rgba(255, 255, 255, 0.75);
-  --dropdown-bkgDark: rgba(0, 0, 0, 0.7);
+  --dropdown-bkgLight: rgba(255, 255, 255, 0.90);
   
 }
 
@@ -58,14 +56,13 @@ currentWeatherTemplate.innerHTML = `
     width: 100%;
     height: var(--searchBar-height); /*height	380	50	PX	3840	129	PX*/
     border-radius: 50px;
-    background-color: var(--input-bkgLight);
+    background-color: var(--components-backgroundLight);
     border-style: none;
-    margin-top: var(--margin-top); 
     margin-top: var(--margin-top); 
     outline:none;
     padding: 0 37px 0 64px;
     font-size: var(--search-font); 
-    color: var(--lightMode-text);
+   color: inherit;
   }
 
   .dark #search-location{
@@ -73,7 +70,7 @@ currentWeatherTemplate.innerHTML = `
   }
 
   #search-location::placeholder {
-    color: var(--lightMode-text);
+    color: inherit;
   }
 
 
@@ -83,12 +80,12 @@ currentWeatherTemplate.innerHTML = `
 
   #search-dropdown{
     position:absolute;
-    background-color: var(--dropdown-bkgLight);
+    background-color: var(--menu-color);
     width:90%;
     height: 100px;
     margin-left:2%;
     border-radius: 10px;
-    color: var(--lightMode-text);
+    color: inherit;
     overflow-y: auto;
     visibility: hidden;
   }
@@ -388,20 +385,15 @@ class CurrentConditions extends HTMLElement {
     for (let i = 0; i < twentyFourHrs.length; i++) {
       if (
         //zonedTimeToUTC converts the users timezone to UTC time
-        //zonedTimeToUTC converts the users timezone to UTC time
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) <
         getTime(startOfHour(this.today))
       ) {
-        //ignores time before the start of the hour on users computer
         //ignores time before the start of the hour on users computer
         continue;
       }
       const hour = document.createElement('div');
       hour.classList.add('hour');
 
-      console.log(
-        getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)),
-      );
       if (
         getTime(zonedTimeToUtc(parseISO(twentyFourHrs[i].time), timeZone)) ===
         getTime(startOfHour(this.today))

@@ -31,6 +31,7 @@
   --components-boxShadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   --components-borderRadius: 1.25rem;
   --components-backgroundLight: rgba(255, 255, 255, 0.75);
+  --menu-color: #f8fafd;
   --hourlyDaily-smFont: clamp(
     1rem,
     0.90381rem + 0.405vw,
@@ -121,13 +122,13 @@ footer {
 }
 
 footer img {
-  width: var(--small-text);
+  width: var(--icon-width);
   vertical-align: middle;
 }
 
 footer a {
   text-decoration: none;
-  color: var(--components-backgroundLight);
+  color: #eef2fb;
 }
 
 /* .settings {
@@ -159,7 +160,7 @@ footer a {
   ); /*margin	380	8	PX	3840	158	PX*/
   height: var(--searchBar-height);
   width: var(--searchBar-height);
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--components-backgroundLight);
   border-radius: 50%;
   margin-top: var(--margin-top);
 }
@@ -177,6 +178,59 @@ footer a {
 
 .settings {
   width: var(--icon-width);
+}
+
+.menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  top: 0;
+  right: 0;
+  background-color: var(--menu-color);
+  width: clamp(
+    10.875rem,
+    10.22835rem + 2.874vw,
+    17.125rem
+  ); /* width 360	174	PX	3840	274	PX*/
+  height: clamp(
+    11rem,
+    8.59625rem + 6.41vw,
+    17.25rem
+  ); /*height	600	176	PX	2160	276	PX
+  z-index: 11;*/
+  margin-top: clamp(
+    5rem,
+    4.52165rem + 2.126vw,
+    9.625rem
+  ); /*margin-top	360	80	PX	3840	154	PX*/
+  margin-right: clamp(
+    1.875rem,
+    1.44818rem + 1.897vw,
+    6rem
+  ); /*margin-right	360	30	PX	3840	96	PX*/
+  box-shadow: var(--components-boxShadow);
+  z-index: 12;
+}
+
+.menu div {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  font-size: var(--small-text);
+  flex: 1;
+  padding: 0 5% 0 5%;
+}
+
+.menu div:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.menu img {
+  width: var(--icon-width);
+  height: var(--icon-width);
+  margin: 0 5% 0 0;
 }
 
 saved-locations {
@@ -227,6 +281,22 @@ saved-locations {
   .settingsContainer {
     right: 4%;
     top: 6%;
+  }
+
+  .menu {
+    /* width: 174px; */
+    /* height: 176px; */
+    /* margin: 130px 30px 0 0; */
+    margin-right: clamp(
+      1.875rem,
+      0.44873rem + 6.339vw,
+      4.375rem
+    ); /*margin-top	360	30	PX	991	70	PX*/
+    margin-top: clamp(
+      8.125rem,
+      7.05535rem + 4.754vw,
+      10rem
+    ); /*margin-top	360	130	PX	991	160	PX*/
   }
 }
 
