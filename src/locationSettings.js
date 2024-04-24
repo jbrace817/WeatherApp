@@ -23,7 +23,7 @@ p {
     position: relative;
     height: clamp(16.1875rem, 12.97405rem + 14.282vw, 47.25rem); /* height 360	259	PX	3840	756	PX  other 35vh*/
     width:  clamp(18rem, 14.89658rem + 13.793vw, 48rem); /* width 360	288	PX	3840	768*/
-    background-color: rgba(255, 255, 255, 1);
+    background-color: var(--menu-color);
     border-radius: var(--components-borderRadius);
     backdrop-filter: 10px;
     transform: translate(-50%, -50%);
@@ -75,7 +75,7 @@ p {
     padding: 0 14% 0 5px;
     background-color: #eee;
     border-style: none;
-    color: inherit;
+    color: #4f5867;
     height: var(--medium-text);
     border-radius: 6px;
     font-size: var(--small-text);
@@ -91,7 +91,7 @@ p {
     height: 100px;
     margin-left: 2%;
     border-radius: 10px;
-    color: inherit;
+    color: #4f5867;
     overflow-y: auto;
     visibility: hidden;
     z-index: 2; 
@@ -231,9 +231,9 @@ class LocationSettings extends HTMLElement {
 
   closeModalWindow() {
     const exitModal = this.shadowRoot.querySelector('.exitModal');
+    const savedLocations = document.querySelector('saved-locations');
     exitModal.addEventListener('click', () => {
       this.clearIcon.style.visibility = 'hidden';
-      const savedLocations = document.querySelector('saved-locations');
       savedLocations.style.visibility = 'hidden';
       this.dropdownList.style.visibility = 'hidden';
     });

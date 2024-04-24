@@ -48,7 +48,7 @@ menuTemplate.innerHTML = `
 <div class="menu">
     <div id="theme"><img src="./images/moon.svg" alt=""><p>Dark</p></div>
     <div><img src="./images/thermometer.svg" alt=""><p>Celsius</p></div>
-    <div><img src="./images/map-pin.svg" alt="Map pin icon for location settings"><p>Locations</p></div>
+    <div id="menuLocations"><img src="./images/map-pin.svg" alt="Map pin icon for location settings"><p>Locations</p></div>
 </div>
 `;
 
@@ -103,8 +103,19 @@ class Menu extends HTMLElement {
     document.body.style.color = '#EEF2FB';
   }
 
+  openSavedLocations() {
+    const savedLocations = document.querySelector('saved-locations');
+    const menuLocations = this.shadowRoot.getElementById('menuLocations');
+    const settingsMenu = document.querySelector('settings-menu');
+    menuLocations.addEventListener('click', () => {
+      savedLocations.style.visibility = 'visible';
+      settingsMenu.classList.remove('visible');
+    });
+  }
+
   connectedCallback() {
     this.switchThemes();
+    this.openSavedLocations();
   }
 }
 
