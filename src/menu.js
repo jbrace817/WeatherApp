@@ -57,38 +57,54 @@ class Menu extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(menuTemplate.content.cloneNode(true));
+    this.theme = this.shadowRoot.getElementById('theme');
   }
 
-  themes() {
-    const theme = this.shadowRoot.getElementById('theme');
-
-    theme.addEventListener('click', () => {
-      if (theme.lastElementChild.textContent === 'Dark') {
-        theme.firstElementChild.setAttribute('src', './images/sun.svg');
-        theme.lastElementChild.textContent = 'Light';
-        document.body.style.backgroundImage = 'url("./images/darkMode.jpg")';
-        document.documentElement.style.setProperty(
-          '--components-backgroundLight',
-          'rgba(47, 53, 71, 0.75)',
-        );
-        document.documentElement.style.setProperty('--menu-color', '#3d414f');
-        document.body.style.color = '#EEF2FB';
+  switchThemes() {
+    this.theme.addEventListener('click', () => {
+      if (this.theme.lastElementChild.textContent === 'Dark') {
+        this.darkTheme();
       } else {
-        theme.firstElementChild.setAttribute('src', './images/moon.svg');
-        theme.lastElementChild.textContent = 'Dark';
-        document.body.style.backgroundImage = 'url("./images/lightMode.jpg")';
-        document.documentElement.style.setProperty(
-          '--components-backgroundLight',
-          'rgba(255, 255, 255, 0.75)',
-        );
-        document.documentElement.style.setProperty('--menu-color', '#f8fafd');
-        document.body.style.color = '#4f5867';
+        this.lightTheme();
       }
     });
   }
 
+  detectTheme() {
+    const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (darkThemeMq.matches) {
+      this.darkTheme();
+    } else {
+      this.lightTheme();
+    }
+  }
+
+  lightTheme() {
+    this.theme.firstElementChild.setAttribute('src', './images/moon.svg');
+    this.theme.lastElementChild.textContent = 'Dark';
+    document.body.style.backgroundImage = 'url("./images/lightMode.jpg")';
+    document.documentElement.style.setProperty(
+      '--components-backgroundLight',
+      'rgba(255, 255, 255, 0.75)',
+    );
+    document.documentElement.style.setProperty('--menu-color', '#f8fafd');
+    document.body.style.color = '#4f5867';
+  }
+
+  darkTheme() {
+    this.theme.firstElementChild.setAttribute('src', './images/sun.svg');
+    this.theme.lastElementChild.textContent = 'Light';
+    document.body.style.backgroundImage = 'url("./images/darkMode.jpg")';
+    document.documentElement.style.setProperty(
+      '--components-backgroundLight',
+      'rgba(47, 53, 71, 0.75)',
+    );
+    document.documentElement.style.setProperty('--menu-color', '#3d414f');
+    document.body.style.color = '#EEF2FB';
+  }
+
   connectedCallback() {
-    this.themes();
+    this.switchThemes();
   }
 }
 

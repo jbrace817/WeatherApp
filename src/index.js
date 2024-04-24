@@ -14,6 +14,11 @@ window.customElements.define('daily-forecast', DailyForecast);
 window.customElements.define('saved-locations', LocationSettings);
 window.customElements.define('settings-menu', Menu);
 
+function appTheme() {
+  const menu = document.querySelector('settings-menu');
+  menu.detectTheme();
+}
+
 //Settings menu behavior
 function settingsMenuBehavior() {
   const settingsBtn = document.querySelector('.settingsContainer');
@@ -34,5 +39,5 @@ function settingsMenuBehavior() {
     settingsMenu.classList.remove('visible');
   });
 }
-
+appTheme();
 settingsMenuBehavior();
