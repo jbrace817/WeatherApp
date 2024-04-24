@@ -14,35 +14,25 @@ window.customElements.define('daily-forecast', DailyForecast);
 window.customElements.define('saved-locations', LocationSettings);
 window.customElements.define('settings-menu', Menu);
 
-// const settingsBtn = document.querySelector('.settingsContainer');
-// settingsBtn.addEventListener('click', () => {
-//   const settingsModal = document.querySelector('saved-locations');
-//   settingsModal.style.visibility = 'visible';
-//   settingsModal.prefillLookup();
-// });
+//Settings menu behavior
+function settingsMenuBehavior() {
+  const settingsBtn = document.querySelector('.settingsContainer');
+  const settingsMenu = document.querySelector('settings-menu');
 
-// const viewMode = document.getElementById('mode');
+  settingsBtn.addEventListener('click', () => {
+    settingsMenu.classList.toggle('visible');
+  });
 
-// viewMode.addEventListener('click', () => {
-//   if (viewMode.lastElementChild.textContent === 'Dark') {
-//     viewMode.firstElementChild.setAttribute('src', './images/sun.svg');
-//     viewMode.lastElementChild.textContent = 'Light';
-//     document.body.style.backgroundImage = 'url("./images/darkMode.jpg")';
-//     document.documentElement.style.setProperty(
-//       '--components-backgroundLight',
-//       'rgba(47, 53, 71, 0.75)',
-//     );
-//     document.documentElement.style.setProperty('--menu-color', '#3d414f');
-//     document.body.style.color = '#EEF2FB';
-//   } else {
-//     viewMode.firstElementChild.setAttribute('src', './images/moon.svg');
-//     viewMode.lastElementChild.textContent = 'Dark';
-//     document.body.style.backgroundImage = 'url("./images/lightMode.jpg")';
-//     document.documentElement.style.setProperty(
-//       '--components-backgroundLight',
-//       'rgba(255, 255, 255, 0.75)',
-//     );
-//     document.documentElement.style.setProperty('--menu-color', '#f8fafd');
-//     document.body.style.color = '#4f5867';
-//   }
-// });
+  window.addEventListener('click', (e) => {
+    if (
+      e.target.classList.contains('settings') ||
+      e.target.classList.contains('settingsContainer') ||
+      e.target === settingsMenu
+    ) {
+      return;
+    }
+    settingsMenu.classList.remove('visible');
+  });
+}
+
+settingsMenuBehavior();

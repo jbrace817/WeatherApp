@@ -181,6 +181,7 @@ footer a {
 }
 
 settings-menu {
+  visibility: hidden;
   position: absolute;
   /* display: flex;
   flex-direction: column;
@@ -202,6 +203,10 @@ settings-menu {
   ); /*margin-right	360	30	PX	3840	96	PX*/
   box-shadow: var(--components-boxShadow);
   z-index: 11;
+}
+
+.visible {
+  visibility: visible;
 }
 
 /* .menu div {
