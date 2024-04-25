@@ -232,11 +232,21 @@ class LocationSettings extends HTMLElement {
   closeModalWindow() {
     const exitModal = this.shadowRoot.querySelector('.exitModal');
     const savedLocations = document.querySelector('saved-locations');
+    const backdrop = document.querySelector('.backdrop');
+    let clearIconVisiblilty = this.clearIcon.style.visibility;
     exitModal.addEventListener('click', () => {
-      this.clearIcon.style.visibility = 'hidden';
-      savedLocations.style.visibility = 'hidden';
-      this.dropdownList.style.visibility = 'hidden';
+      clearIconVisiblilty = 'hidden';
+      displayNone();
     });
+    backdrop.addEventListener('click', () => {
+      clearIconVisiblilty = 'hidden';
+      displayNone();
+    });
+
+    function displayNone() {
+      savedLocations.style.display = 'none';
+      backdrop.style.display = 'none';
+    }
   }
 
   //Prefills the input with the location from the previous screen

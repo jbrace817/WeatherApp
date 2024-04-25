@@ -88,6 +88,7 @@ currentWeatherTemplate.innerHTML = `
     color: inherit;
     overflow-y: auto;
     visibility: hidden;
+    z-index: 3;
   }
 
   .dark #search-dropdown{

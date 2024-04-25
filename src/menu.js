@@ -107,8 +107,12 @@ class Menu extends HTMLElement {
     const savedLocations = document.querySelector('saved-locations');
     const menuLocations = this.shadowRoot.getElementById('menuLocations');
     const settingsMenu = document.querySelector('settings-menu');
+    const backdrop = document.querySelector('.backdrop');
+
     menuLocations.addEventListener('click', () => {
-      savedLocations.style.visibility = 'visible';
+      savedLocations.prefillLookup();
+      savedLocations.style.display = 'block';
+      backdrop.style.display = 'block';
       settingsMenu.classList.remove('visible');
     });
   }

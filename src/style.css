@@ -94,7 +94,7 @@ hourly-scroll {
   grid-area: 1 / 1 / 2 / 3;
   align-self: center;
   justify-self: end;
-  z-index: 10;
+  z-index: 2;
 }
 
 .dailyContainer {
@@ -152,7 +152,7 @@ footer a {
   align-items: center;
   top: 0;
   right: 0;
-  z-index: 11;
+  z-index: 2;
   margin-right: clamp(
     0.25rem,
     -0.2649rem + 2.168vw,
@@ -202,7 +202,7 @@ settings-menu {
     6rem
   ); /*margin-right	360	30	PX	3840	96	PX*/
   box-shadow: var(--components-boxShadow);
-  z-index: 11;
+  z-index: 3;
 }
 
 .visible {
@@ -231,13 +231,23 @@ settings-menu {
 
 saved-locations {
   position: absolute;
-  height: 100%;
-  width: 100vw;
-  backdrop-filter: blur(6px);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: none;
+  transform: translate(-50%, 0);
+}
+
+.backdrop {
+  display: none;
+  position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
-  z-index: 12;
-  visibility: hidden;
+  backdrop-filter: blur(6px);
+  z-index: 2;
 }
 
 @media (max-width: 991.98px) {
