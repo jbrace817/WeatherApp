@@ -1,4 +1,7 @@
 'use strict';
+
+import { LocalCache } from './locationSettings';
+
 let menuTemplate = document.createElement('template');
 menuTemplate.innerHTML = `
 <style>
@@ -47,7 +50,7 @@ menuTemplate.innerHTML = `
 
 <div class="menu">
     <div id="theme"><img src="./images/moon.svg" alt=""><p>Dark</p></div>
-    <div><img src="./images/thermometer.svg" alt=""><p>Celsius</p></div>
+    <div id="tempScale"><img src="./images/thermometer.svg" alt=""><p>Celsius</p></div>
     <div id="menuLocations"><img src="./images/map-pin.svg" alt="Map pin icon for location settings"><p>Locations</p></div>
 </div>
 `;
@@ -117,9 +120,32 @@ class Menu extends HTMLElement {
     });
   }
 
+  setTemperatureScale() {
+    const tempScale = this.shadowRoot.getElementById('tempScale');
+    const storage = new LocalCache();
+    const currentConditionsComponent =
+      document.querySelector('current-conditions');
+    tempScale.addEventListener('click', (e) => {
+      if (tempScale.lastElementChild.textContent === 'Celsius') {
+        storage.setStringify('tempScale', ['c', '&deg;C']);
+        tempScale.lastElementChild.textContent = 'Fahrenheit';
+        currentConditionsComponent.locationLookup(
+          currentConditionsComponent.locationInput.value,
+        );
+      } else {
+        storage.setStringify('tempScale', ['f', '&deg;F']);
+        tempScale.lastElementChild.textContent = 'Celsius';
+        currentConditionsComponent.locationLookup(
+          currentConditionsComponent.locationInput.value,
+        );
+      }
+    });
+  }
+
   connectedCallback() {
     this.switchThemes();
     this.openSavedLocations();
+    this.setTemperatureScale();
   }
 }
 

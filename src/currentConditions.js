@@ -253,6 +253,7 @@ class CurrentConditions extends HTMLElement {
       'currentTempContainer',
     );
     this.loaderContainer = this.shadowRoot.querySelector('.loaderContainer'); //loader appears before data is loaded
+    this.storage = new LocalCache();
     this.today = new Date();
     this.autoComplete = new AutoComplete(this);
   }
@@ -285,21 +286,27 @@ class CurrentConditions extends HTMLElement {
     let windSpeed = this.shadowRoot.querySelector('[wind]');
     let weatherIcon = this.shadowRoot.getElementById('weatherIcon');
     const imperial = '&deg;F'; //fahrenheit
-    const metric = '&deg;C'; // celsius
+    // const metric = '&deg;C'; // celsius
     const mph = 'mph'; //miles per hour
-    const kph = 'kph'; //kilometers
+    // const kph = 'kph'; //kilometers
     console.log(currentTemp);
 
     this.loaderContainer.style.display = 'none';
     this.currentTempContainer.style.display = 'block';
-    currentTemp.setAttribute('temp', Math.round(data.current.temp_f));
-    currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${imperial}`;
+    currentTemp.setAttribute(
+      'temp',
+      Math.round(data.current['temp_' + this.temperatureScale()[0]]),
+    );
+    currentTemp.innerHTML = `${currentTemp.getAttribute('temp')}${this.temperatureScale()[1]}`;
     weatherIcon.setAttribute('src', `https:${data.current.condition.icon}`);
     weatherIcon.setAttribute('alt', data.current.condition.text);
     weatherText.setAttribute('text', data.current.condition.text);
     weatherText.textContent = `${weatherText.getAttribute('text')}`;
-    feelsLike.setAttribute('feelsLike', Math.round(data.current.feelslike_f));
-    feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${imperial}`;
+    feelsLike.setAttribute(
+      'feelsLike',
+      Math.round(data.current['feelslike_' + this.temperatureScale()[0]]),
+    );
+    feelsLike.innerHTML = `${feelsLike.getAttribute('feelsLike')}${this.temperatureScale()[1]}`;
     windSpeed.setAttribute('wind', Math.round(data.current.wind_mph));
     windSpeed.innerHTML = `${windSpeed.getAttribute('wind')} ${mph}`;
     if (this.locationInput.value === '') {
@@ -310,6 +317,11 @@ class CurrentConditions extends HTMLElement {
       this.autoComplete.clearLocationInputValue(this.locationInput.value);
       // this.clearLocationInputValue(this.locationInput.value); //Reveals button to clear text loaded by geolocation api
     }
+  }
+
+  temperatureScale() {
+    let tempScale = this.storage.getParse('tempScale') ?? ['f', '&deg;F'];
+    return tempScale;
   }
 
   locationLookup(value) {
@@ -327,13 +339,13 @@ class CurrentConditions extends HTMLElement {
     window.addEventListener(
       'load',
       () => {
-        const storage = new LocalCache();
+        // const storage = new LocalCache();
 
         //Keys for storage
         const favorite = 'favorite';
         console.log('ran');
-        if (storage.getParse(favorite)) {
-          this.fetchDataUpdateUI(storage.getParse(favorite));
+        if (this.storage.getParse(favorite)) {
+          this.fetchDataUpdateUI(this.storage.getParse(favorite));
         } else {
           this.fetchDataUpdateUI();
         }
@@ -406,7 +418,7 @@ class CurrentConditions extends HTMLElement {
       }
       hour.innerHTML += `
       <img src="https://${twentyFourHrs[i].condition.icon}" alt="${twentyFourHrs[i].condition.text}">
-      <p class="temp">${Math.round(twentyFourHrs[i].temp_f)}&deg;F</p>
+      <p class="temp">${Math.round(twentyFourHrs[i]['temp_' + this.temperatureScale()[0]])}${this.temperatureScale()[1]}</p>
     `;
       container.appendChild(hour);
     }
@@ -441,7 +453,7 @@ class CurrentConditions extends HTMLElement {
         weatherDescription.getAttribute('description');
       maxMinTemp.setAttribute(
         'maxMin',
-        `${Math.round(data.forecast.forecastday[i].day.maxtemp_f)}/${Math.round(data.forecast.forecastday[i].day.mintemp_f)}&deg;F`,
+        `${Math.round(data.forecast.forecastday[i].day['maxtemp_' + this.temperatureScale()[0]])}/${Math.round(data.forecast.forecastday[i].day['mintemp_' + this.temperatureScale()[0]])}${this.temperatureScale()[1]}`,
       );
       maxMinTemp.innerHTML = maxMinTemp.getAttribute('maxMin');
       icon.setAttribute(
