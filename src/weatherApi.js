@@ -1,4 +1,6 @@
 'use strict';
+import { config } from './config';
+
 class GeoLocation {
   static getCurrentPosition() {
     return new Promise((resolve, reject) => {
@@ -35,7 +37,7 @@ class GeoLocation {
 class WeatherAPI {
   constructor() {
     this.url = 'https://api.weatherapi.com/v1/';
-    this.APIKEY = '2781e0322a6547ef98a113813241901';
+    this.APIKEY = config.apiKey;
   }
 
   //current weather data only
