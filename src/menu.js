@@ -1,5 +1,5 @@
 'use strict';
-
+require.context('./images', true, /\.jpg$/);
 import { LocalCache } from './locationSettings';
 
 let menuTemplate = document.createElement('template');
