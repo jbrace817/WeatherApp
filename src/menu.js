@@ -121,25 +121,37 @@ class Menu extends HTMLElement {
   }
 
   setTemperatureScale() {
-    const tempScale = this.shadowRoot.getElementById('tempScale');
+    const menuTempScale = this.shadowRoot.getElementById('tempScale');
     const storage = new LocalCache();
     const currentConditionsComponent =
       document.querySelector('current-conditions');
-    tempScale.addEventListener('click', (e) => {
-      if (tempScale.lastElementChild.textContent === 'Celsius') {
+    const temperatureScale = storage.getParse('tempScale');
+
+    menuTempScale.addEventListener('click', (e) => {
+      if (menuTempScale.lastElementChild.textContent === 'Celsius') {
         storage.setStringify('tempScale', ['c', '&deg;C']);
-        tempScale.lastElementChild.textContent = 'Fahrenheit';
+        menuTempScale.lastElementChild.textContent = 'Fahrenheit';
         currentConditionsComponent.locationLookup(
           currentConditionsComponent.locationInput.value,
         );
       } else {
         storage.setStringify('tempScale', ['f', '&deg;F']);
-        tempScale.lastElementChild.textContent = 'Celsius';
+        menuTempScale.lastElementChild.textContent = 'Celsius';
         currentConditionsComponent.locationLookup(
           currentConditionsComponent.locationInput.value,
         );
       }
     });
+
+    if (!temperatureScale) {
+      return;
+    }
+
+    if (temperatureScale[0] === 'f') {
+      menuTempScale.lastElementChild.textContent = 'Celsius';
+    } else {
+      menuTempScale.lastElementChild.textContent = 'Fahrenheit';
+    }
   }
 
   connectedCallback() {
