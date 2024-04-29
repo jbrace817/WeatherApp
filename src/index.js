@@ -1,4 +1,3 @@
-import { GeoLocation, WeatherAPI } from './weatherApi';
 import { CurrentConditions } from './currentConditions';
 import { Dashboard } from './dashboard';
 import { HourlyScroll } from './hourlyScroll';

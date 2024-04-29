@@ -1,6 +1,7 @@
 'use strict';
 require.context('./images', true, /\.jpg$/);
-import { LocalCache } from './locationSettings';
+
+import { AppStorage } from './appAPI/appStorage';
 
 let menuTemplate = document.createElement('template');
 menuTemplate.innerHTML = `
@@ -122,7 +123,7 @@ class Menu extends HTMLElement {
 
   setTemperatureScale() {
     const menuTempScale = this.shadowRoot.getElementById('tempScale');
-    const storage = new LocalCache();
+    const storage = new AppStorage();
     const currentConditionsComponent =
       document.querySelector('current-conditions');
     const temperatureScale = storage.getParse('tempScale');

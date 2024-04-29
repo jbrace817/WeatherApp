@@ -1,5 +1,6 @@
 import { CurrentConditions } from './currentConditions';
 import { AutoComplete } from './autoComplete';
+import { AppStorage } from './appAPI/appStorage';
 ('use strict');
 const savedLocationTemplate = document.createElement('template');
 savedLocationTemplate.innerHTML = `
@@ -219,7 +220,7 @@ class LocationSettings extends HTMLElement {
     this.dropdownList = this.shadowRoot.getElementById('dropdown'); //retrieves <div> of location values
     this.clearIcon = this.shadowRoot.querySelector('.clearText');
     this.lookupInput = this.shadowRoot.getElementById('lookup');
-    this.localCache = new LocalCache();
+    this.storage = new AppStorage();
     this.autoComplete = new AutoComplete(this);
     this.currentConditionsComponent =
       document.querySelector('current-conditions'); //<current-conditions> object
@@ -261,7 +262,7 @@ class LocationSettings extends HTMLElement {
   addToUI() {
     const addButton = this.shadowRoot.querySelector('.addButton');
     addButton.addEventListener('click', () => {
-      const noDuplicates = this.localCache.getParse(this.locationArray);
+      const noDuplicates = this.storage.getParse(this.locationArray);
       console.log(!this.lookupInput.value.match(/^[^,]*,[^,]*$/g));
       if (
         !this.lookupInput.value ||
@@ -275,7 +276,7 @@ class LocationSettings extends HTMLElement {
         return;
       } else {
         console.log(this.locationInput.value);
-        this.localCache.addToLocalStorage(this.locationInput.value);
+        this.storage.addToLocalStorage(this.locationInput.value);
         this.renderSavedLocations(this.locationInput.value);
         this.locationInput.value = '';
         this.clearIcon.style.visibility = 'hidden';
@@ -303,7 +304,7 @@ class LocationSettings extends HTMLElement {
 
   //renders each location saved in locaStorage to the UI when the window is opened
   renderLocalStorage() {
-    const locationsInStorage = this.localCache.getParse(this.locationArray);
+    const locationsInStorage = this.storage.getParse(this.locationArray);
     if (!locationsInStorage) {
       return;
     } else {
@@ -318,10 +319,10 @@ class LocationSettings extends HTMLElement {
     saved.addEventListener('click', (event) => {
       if (event.target.className === 'removeSavedLocation') {
         event.target.parentElement.remove();
-        this.localCache.removeFromStorage(
+        this.storage.removeFromStorage(
           event.target.previousElementSibling.textContent,
         );
-        this.localCache.setStringify(this.favoriteLocation, null);
+        this.storage.setStringify(this.favoriteLocation, null);
       }
     });
   }
@@ -342,15 +343,15 @@ class LocationSettings extends HTMLElement {
 
       if (goldStar.length === 0) {
         target.add('goldStar');
-        this.localCache.setStringify(this.favoriteLocation, city);
+        this.storage.setStringify(this.favoriteLocation, city);
         this.refreshComponent(city);
       } else if (target.contains('goldStar')) {
         target.remove('goldStar');
-        this.localCache.setStringify(this.favoriteLocation, null);
+        this.storage.setStringify(this.favoriteLocation, null);
       } else if (goldStar.length) {
         goldStar[0].classList.remove('goldStar');
         target.add('goldStar');
-        this.localCache.setStringify(this.favoriteLocation, city);
+        this.storage.setStringify(this.favoriteLocation, city);
         this.refreshComponent(city);
       }
     });
@@ -359,7 +360,7 @@ class LocationSettings extends HTMLElement {
     [...saved.children].forEach((value) => {
       if (
         value.children.item('p').textContent ===
-        this.localCache.getParse(this.favoriteLocation)
+        this.storage.getParse(this.favoriteLocation)
       ) {
         value.children[2].classList.add('goldStar');
       }
@@ -396,54 +397,4 @@ class LocationSettings extends HTMLElement {
   }
 }
 
-//This class access the localStorage API
-class LocalCache {
-  constructor() {
-    this.savedLocationsArray = []; //array of locations in localStorage
-  }
-
-  addToLocalStorage(lookupInput) {
-    this.savedLocationsArray = this.getParse() || []; //gets or creates an array in associated with the 'locations' key
-    console.log(lookupInput);
-    console.log(typeof this.savedLocationsArray);
-    this.savedLocationsArray.push(lookupInput);
-    this.setStringify();
-  }
-
-  //gets localStorage JSON data by key and parses it to a string
-  getParse(key) {
-    if (!key) {
-      const allLocations = localStorage.getItem('locations');
-      const parsed = JSON.parse(allLocations);
-      return parsed;
-    } else {
-      const item = localStorage.getItem(key);
-      const parsed = JSON.parse(item);
-      return parsed;
-    }
-  }
-
-  //converts data from JavaScript to a JSON String
-  setStringify(key, location) {
-    if (!key) {
-      const stringifiedLocations = JSON.stringify(this.savedLocationsArray);
-      localStorage.setItem('locations', stringifiedLocations);
-      console.log(this.savedLocationsArray);
-    } else {
-      let value = JSON.stringify(location);
-      localStorage.setItem(key, value);
-    }
-  }
-
-  removeFromStorage(string) {
-    let index = this.getParse().indexOf(string);
-    this.savedLocationsArray = this.getParse();
-    console.log(this.savedLocationsArray);
-    this.savedLocationsArray.splice(index, 1);
-    this.setStringify();
-    console.log(this.getParse());
-    console.log(this.savedLocationsArray);
-  }
-}
-
-export { LocationSettings, LocalCache };
+export { LocationSettings };

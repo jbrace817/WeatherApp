@@ -1,11 +1,11 @@
 'use strict';
-import { GeoLocation, WeatherAPI } from './weatherApi';
+import { GeoLocation, WeatherAPI } from './appAPI/weatherApi';
 import { AutoComplete } from './autoComplete';
 import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { HourlyScroll } from './hourlyScroll';
 import { DailyForecast } from './dailyForecast';
-import { LocalCache } from './locationSettings';
+import { AppStorage } from './appAPI/appStorage';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>
@@ -253,7 +253,7 @@ class CurrentConditions extends HTMLElement {
       'currentTempContainer',
     );
     this.loaderContainer = this.shadowRoot.querySelector('.loaderContainer'); //loader appears before data is loaded
-    this.storage = new LocalCache();
+    this.storage = new AppStorage();
     this.today = new Date();
     this.autoComplete = new AutoComplete(this);
   }
@@ -339,8 +339,6 @@ class CurrentConditions extends HTMLElement {
     window.addEventListener(
       'load',
       () => {
-        // const storage = new LocalCache();
-
         //Keys for storage
         const favorite = 'favorite';
         console.log('ran');

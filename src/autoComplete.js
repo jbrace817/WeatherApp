@@ -1,4 +1,4 @@
-import { WeatherAPI } from './weatherApi';
+import { WeatherAPI } from './appAPI/weatherApi';
 const todaysWeather = new WeatherAPI();
 
 class AutoComplete {

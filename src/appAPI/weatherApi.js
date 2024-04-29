@@ -1,5 +1,5 @@
 'use strict';
-import { API_KEY } from './config';
+import { API_KEY } from '../config';
 
 class GeoLocation {
   static getCurrentPosition() {
