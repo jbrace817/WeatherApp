@@ -1,5 +1,5 @@
 import { CurrentConditions } from './currentConditions';
-import { AutoComplete } from './autoComplete';
+import { AutoComplete } from './appAPI/autoComplete';
 import { AppStorage } from './appAPI/appStorage';
 ('use strict');
 const savedLocationTemplate = document.createElement('template');

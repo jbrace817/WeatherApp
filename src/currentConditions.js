@@ -1,6 +1,6 @@
 'use strict';
 import { GeoLocation, WeatherAPI } from './appAPI/weatherApi';
-import { AutoComplete } from './autoComplete';
+import { AutoComplete } from './appAPI/autoComplete';
 import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { HourlyScroll } from './hourlyScroll';
