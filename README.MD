@@ -65,11 +65,9 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -91,8 +89,6 @@
 
 I created this personal project to help me get a better understanding on how to work with API's and web components. The API I used is a free tier provided by [www.weatherapi.com](https://www.weatherapi.com/). If you are interested in learning about web components, I found a great resource at [javascript.info](https://javascript.info/web-components). Eslint-config-airbnb-base and Prettier are used to format the code. Date-fns-tz version 2.0.1 was needed for converting time from zoned time to UTC.
 
-The free tier provided by weather
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
@@ -105,10 +101,9 @@ If you don't already have git, Node.js with npm installed, please see the prereq
 
 Below are the links to the installers needed to run this project successfully:
 <br>
-<br>
-[Git](https://nodejs.org/en/download/)
-<br>
-[Node.js with npm](https://nodejs.org/en/download/) (Be sure to install the version labeled LTS)
+
+- [Git](https://git-scm.com/downloads)
+- [Node.js with npm](https://nodejs.org/en/download/) (Be sure to install the version labeled LTS)
 
 To check and see if you already have Git installed, open a terminal window and try the following command.
 
@@ -137,9 +132,17 @@ npm -v
    ```sh
    npm install
    ```
-6. Enter your API in `config.js`
+6. Enter your API key to `config.js`
    ```js
    const API_KEY = 'ENTER YOUR API';
+   ```
+7. Script to start the project in the developer environment.
+   ```sh
+   npm start
+   ```
+8. Script to bundle the project using webpack.
+   ```sh
+   npm run build
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -148,22 +151,21 @@ npm -v
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+When the application is loaded for the first time, it will prompt the user if it can use their location. If the user agrees, the application will utilize the Geolocation API to retrieve the user's current position. If declined, the application will load data for New York City.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+The search bar at the top of the screen allows the user to search locations using the autocomplete API provided by weatherapi.com. This enables users to look up locations by city name, zip code, latitude, and longitude. A dropdown will appear, allowing users to navigate the list to find their desired location.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+The gear icon in the upper right of the application reveals the settings menu, where users can toggle the theme of the application and the temperature scale. There is also a menu option labeled "Locations," which permits users to save desired locations to the browser's local storage.
 
-<!-- ROADMAP -->
+<p align="center">
+<img src="./src/images/Menu_screenshot.jpg" alt="" style="width: 300px">
+</p>
 
-## Roadmap
+When the menu is opened, it will automatically populate the location from the main application and allow the user to save that location unless it's already in the list of saved locations. If a user chooses to search for a location, autocomplete is available in this menu's input field. Users can favorite a single location by clicking the star icon, which will then load at the time of click and when the user returns to the application at a later point in time. If a user wishes to see data for other saved locations, they may do so by clicking the desired location in the menu. If a user's browser cache and cookies are cleared, all saved locations will be removed from the browser's local storage.
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-  - [ ] Nested Feature
-
-See the [open issues](https://github.com/jbrace817/WeatherApp/issues) for a full list of proposed features (and known issues).
+<p align="center">
+<img src="./src/images/Locations_screenshot.jpg" alt="" style="width: 300px">
+</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -188,7 +190,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -197,16 +199,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 ## Contact
 
 Project Link: [https://github.com/jbrace817/WeatherApp](https://github.com/jbrace817/WeatherApp)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ACKNOWLEDGMENTS -->
-
-## Acknowledgments
-
-- []()
-- []()
-- []()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -225,6 +217,6 @@ Project Link: [https://github.com/jbrace817/WeatherApp](https://github.com/jbrac
 [license-url]: https://github.com/jbrace817/WeatherApp/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/jamesfbrace
-[weatherApp-screenshot]: src/images/screenshot.jpg
+[weatherApp-screenshot]: src/images/App_screenshot.jpg
 [JavaScript]: https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=000&style=flat-square
 [JavaScript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
