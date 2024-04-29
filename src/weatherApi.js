@@ -1,5 +1,5 @@
 'use strict';
-import { config } from './config';
+import { API_KEY } from './config';
 
 class GeoLocation {
   static getCurrentPosition() {
@@ -37,7 +37,7 @@ class GeoLocation {
 class WeatherAPI {
   constructor() {
     this.url = 'https://api.weatherapi.com/v1/';
-    this.APIKEY = config.apiKey;
+    this.APIKEY = API_KEY;
   }
 
   //current weather data only
