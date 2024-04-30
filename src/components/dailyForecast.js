@@ -1,5 +1,4 @@
 'use strict';
-import { format } from 'date-fns';
 
 const dailyForecastTemplate = document.createElement('template');
 

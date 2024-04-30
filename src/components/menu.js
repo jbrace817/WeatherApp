@@ -1,7 +1,7 @@
 'use strict';
-require.context('./images', true, /\.jpg$/);
+require.context('../images', true, /\.jpg$/);
 
-import { AppStorage } from './appAPI/appStorage';
+import { AppStorage } from '../appAPI/appStorage';
 
 let menuTemplate = document.createElement('template');
 menuTemplate.innerHTML = `

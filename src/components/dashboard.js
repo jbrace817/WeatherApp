@@ -1,5 +1,5 @@
 'use strict';
-require.context('./images', true, /\.svg$/); //add images to production mode in webpack
+require.context('../images', true, /\.svg$/); //add images to production mode in webpack
 
 const suplementalDataTemplate = document.createElement('template');
 

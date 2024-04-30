@@ -1,11 +1,11 @@
 'use strict';
-import { GeoLocation, WeatherAPI } from './appAPI/weatherApi';
-import { AutoComplete } from './appAPI/autoComplete';
+import { GeoLocation, WeatherAPI } from '../appAPI/weatherApi';
+import { AutoComplete } from '../appAPI/autoComplete';
 import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { HourlyScroll } from './hourlyScroll';
 import { DailyForecast } from './dailyForecast';
-import { AppStorage } from './appAPI/appStorage';
+import { AppStorage } from '../appAPI/appStorage';
 const currentWeatherTemplate = document.createElement('template');
 currentWeatherTemplate.innerHTML = `
 <style>

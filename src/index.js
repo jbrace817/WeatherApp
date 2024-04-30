@@ -1,9 +1,9 @@
-import { CurrentConditions } from './currentConditions';
-import { Dashboard } from './dashboard';
-import { HourlyScroll } from './hourlyScroll';
-import { DailyForecast } from './dailyForecast';
-import { LocationSettings } from './locationSettings';
-import { Menu } from './menu';
+import { CurrentConditions } from './components/currentConditions';
+import { Dashboard } from './components/dashboard';
+import { HourlyScroll } from './components/hourlyScroll';
+import { DailyForecast } from './components/dailyForecast';
+import { LocationSettings } from './components/locationSettings';
+import { Menu } from './components/menu';
 import './style.css';
 
 window.customElements.define('current-conditions', CurrentConditions);

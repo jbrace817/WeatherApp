@@ -1,5 +1,4 @@
 'use strict';
-import { CurrentConditions, LocationData } from './currentConditions';
 
 const hourlyDataTemplate = document.createElement('template');
 
