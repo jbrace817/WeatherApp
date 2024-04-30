@@ -252,7 +252,6 @@ class LocationSettings extends HTMLElement {
   //Prefills the input with the location from the previous screen
   prefillLookup() {
     const mainAppInput = this.currentConditionsComponent.locationInput.value;
-    console.log(mainAppInput);
     this.lookupInput.value = mainAppInput;
     this.autoComplete.clearLocationInputValue(this.lookupInput.value);
   }
@@ -262,7 +261,6 @@ class LocationSettings extends HTMLElement {
     const addButton = this.shadowRoot.querySelector('.addButton');
     addButton.addEventListener('click', () => {
       const noDuplicates = this.storage.getParse(this.locationArray);
-      console.log(!this.lookupInput.value.match(/^[^,]*,[^,]*$/g));
       if (
         !this.lookupInput.value ||
         !this.lookupInput.value.match(/^[^,]*,[^,]*$/g)
@@ -274,7 +272,6 @@ class LocationSettings extends HTMLElement {
       ) {
         return;
       } else {
-        console.log(this.locationInput.value);
         this.storage.addToLocalStorage(this.locationInput.value);
         this.renderSavedLocations(this.locationInput.value);
         this.locationInput.value = '';
