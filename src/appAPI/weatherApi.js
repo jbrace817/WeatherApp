@@ -19,16 +19,16 @@ class GeoLocation {
   static async latLong() {
     try {
       const position = await GeoLocation.getCurrentPosition(); //with the latitude and longitude coordinates it can be used by the render method of currentConditions class.
-      console.log(position.latitude + ', ' + position.longitude);
       const cposition = position.latitude + ', ' + position.longitude;
       return cposition; // Do something with position.latitude and position.longitude
     } catch (error) {
       if (error.code === error.PERMISSION_DENIED) {
-        console.log('You blocked access to your location');
+        alert('You blocked access to your location');
         //if user decides to block access to location, default will be New york City.
         return 'new york city';
       } else {
         console.error('Error getting geolocation:', error.message); //Console log any other errors for review.
+        throw new Error('Error getting geolocation:', error.message); //Console log any other errors for review.
       }
     }
   }
@@ -72,6 +72,7 @@ class WeatherAPI {
       return data; //returns list of locations from api
     } catch (error) {
       console.log(error.message);
+      throw new Error(error.message);
     }
   }
 }

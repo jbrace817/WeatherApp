@@ -1,9 +1,8 @@
 'use strict';
 import { GeoLocation, WeatherAPI } from '../appAPI/weatherApi';
 import { AutoComplete } from '../appAPI/autoComplete';
-import { format, formatISO, getTime, parseISO, startOfHour } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
-import { HourlyScroll } from './hourlyScroll';
+import { format, getTime, parseISO, startOfHour } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { DailyForecast } from './dailyForecast';
 import { AppStorage } from '../appAPI/appStorage';
 const currentWeatherTemplate = document.createElement('template');
@@ -264,7 +263,6 @@ class CurrentConditions extends HTMLElement {
       this.currentTempContainer.style.display = 'none';
       this.loaderContainer.style.display = 'flex';
       const data = await todaysWeather.forecast(await location);
-      console.log(data);
       this.render(data);
       this.setDashboardData(data);
       this.setHourlyData(data);
@@ -274,7 +272,7 @@ class CurrentConditions extends HTMLElement {
     } catch (error) {
       console.error('Error fetching weather data: ' + error);
       //show error to user;
-      throw new Error(error);
+      throw new Error('Error fetching weather data: ' + error);
     }
   }
 
@@ -285,11 +283,7 @@ class CurrentConditions extends HTMLElement {
     let feelsLike = this.shadowRoot.querySelector('[feelsLike]');
     let windSpeed = this.shadowRoot.querySelector('[wind]');
     let weatherIcon = this.shadowRoot.getElementById('weatherIcon');
-    const imperial = '&deg;F'; //fahrenheit
-    // const metric = '&deg;C'; // celsius
     const mph = 'mph'; //miles per hour
-    // const kph = 'kph'; //kilometers
-    console.log(currentTemp);
 
     this.loaderContainer.style.display = 'none';
     this.currentTempContainer.style.display = 'block';
@@ -326,7 +320,6 @@ class CurrentConditions extends HTMLElement {
 
   locationLookup(value) {
     if (value) {
-      console.log(this.locationInput.value);
       this.fetchDataUpdateUI(value);
     } else {
       this.initialLoad();
@@ -341,7 +334,6 @@ class CurrentConditions extends HTMLElement {
       () => {
         //Keys for storage
         const favorite = 'favorite';
-        console.log('ran');
         if (this.storage.getParse(favorite)) {
           this.fetchDataUpdateUI(this.storage.getParse(favorite));
         } else {
@@ -364,7 +356,6 @@ class CurrentConditions extends HTMLElement {
     const dashboard = document
       .querySelector('current-dashboard')
       .shadowRoot.querySelectorAll('.data');
-    console.log(dashboard);
 
     let rain = obj.forecast.forecastday[0].day.daily_chance_of_rain + '%';
     let sunrise = obj.forecast.forecastday[0].astro.sunrise;
@@ -389,7 +380,6 @@ class CurrentConditions extends HTMLElement {
     const dayOne = obj.forecast.forecastday[0].hour;
     const dayTwo = obj.forecast.forecastday[1].hour;
     const timeZone = obj.location.tz_id;
-    console.log(timeZone);
 
     const twentyFourHrs = [...dayOne, ...dayTwo];
     container.innerHTML = '';

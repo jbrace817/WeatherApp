@@ -16,8 +16,6 @@ class AutoComplete {
           if (data.length > 0) {
             this.current.dropdownList.style.visibility = 'visible';
             data.forEach((value) => {
-              // console.log(value);
-              // console.log(value.name, value.region, value.country);
               const specificLocation = document.createElement('div');
               specificLocation.classList.add('dropdownValue');
               specificLocation.setAttribute('name', value.name);
@@ -34,13 +32,12 @@ class AutoComplete {
           } else {
             this.current.dropdownList.style.visibility = 'hidden';
           }
-          // console.log(data);
         });
       }
-      // console.log(e.target.value);
     });
   }
 
+  //reveal clear text icon and the listener to clear the text in the input field
   clearLocationInputValue(e) {
     if (!e) {
       this.current.clearIcon.style.visibility = 'hidden';
@@ -101,7 +98,6 @@ class AutoComplete {
         allLocationValues[index].classList.add('selected');
         if (prevIndex >= 0 && allLocationValues.length > 1) {
           allLocationValues[prevIndex].classList.remove('selected');
-          console.log(allLocationValues.length);
         }
 
         this.current.shadowRoot.querySelector('.selected').scrollIntoView();
@@ -126,9 +122,7 @@ class AutoComplete {
 
       function reverseListSelection() {
         if (index === -1) {
-          // console.log(index - 1);
           index++;
-          console.log(index);
         }
         index--;
         prevIndex = index + 1;
@@ -136,15 +130,11 @@ class AutoComplete {
           index = allLocationValues.length - 1;
         }
         allLocationValues[index].classList.add('selected');
-        console.log(prevIndex);
-        // allLocationValues[prevIndex].classList.remove('selected');
         if (prevIndex >= 0 && allLocationValues.length > 1) {
           allLocationValues[prevIndex].classList.remove('selected');
         }
       }
     });
-
-    // console.log(length);
   }
 }
 

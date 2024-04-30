@@ -74,6 +74,7 @@ class Menu extends HTMLElement {
     });
   }
 
+  //detects browsers theme and applies it to the app
   detectTheme() {
     const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
     if (darkThemeMq.matches) {
@@ -107,6 +108,7 @@ class Menu extends HTMLElement {
     document.body.style.color = '#EEF2FB';
   }
 
+  //Opens location menu
   openSavedLocations() {
     const savedLocations = document.querySelector('saved-locations');
     const menuLocations = this.shadowRoot.getElementById('menuLocations');
@@ -121,6 +123,7 @@ class Menu extends HTMLElement {
     });
   }
 
+  //toggles between temperature scales and depnding on whats in local storage the menu is updated to reflect the opposite scale
   setTemperatureScale() {
     const menuTempScale = this.shadowRoot.getElementById('tempScale');
     const storage = new AppStorage();

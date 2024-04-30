@@ -5,14 +5,12 @@ class AppStorage {
   }
 
   addToLocalStorage(lookupInput) {
-    this.savedLocationsArray = this.getParse() || []; //gets or creates an array in associated with the 'locations' key
-    console.log(lookupInput);
-    console.log(typeof this.savedLocationsArray);
+    this.savedLocationsArray = this.getParse() || []; //gets or creates an array associated with the 'locations' key
     this.savedLocationsArray.push(lookupInput);
     this.setStringify();
   }
 
-  //gets localStorage JSON data by key and parses it to a string
+  //gets localStorage JSON data by key and parses it to a JS value or object
   getParse(key) {
     if (!key) {
       const allLocations = localStorage.getItem('locations');
@@ -30,7 +28,6 @@ class AppStorage {
     if (!key) {
       const stringifiedLocations = JSON.stringify(this.savedLocationsArray);
       localStorage.setItem('locations', stringifiedLocations);
-      console.log(this.savedLocationsArray);
     } else {
       let value = JSON.stringify(location);
       localStorage.setItem(key, value);
@@ -40,7 +37,6 @@ class AppStorage {
   removeFromStorage(string) {
     let index = this.getParse().indexOf(string);
     this.savedLocationsArray = this.getParse();
-    console.log(this.savedLocationsArray);
     this.savedLocationsArray.splice(index, 1);
     this.setStringify();
     console.log(this.getParse());
