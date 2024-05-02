@@ -67,9 +67,9 @@ class Menu extends HTMLElement {
   switchThemes() {
     this.theme.addEventListener('click', () => {
       if (this.theme.lastElementChild.textContent === 'Dark') {
-        this.darkTheme();
-      } else {
         this.lightTheme();
+      } else {
+        this.darkTheme();
       }
     });
   }
@@ -85,8 +85,8 @@ class Menu extends HTMLElement {
   }
 
   lightTheme() {
-    this.theme.firstElementChild.setAttribute('src', './images/moon.svg');
-    this.theme.lastElementChild.textContent = 'Dark';
+    this.theme.firstElementChild.setAttribute('src', './images/sun.svg');
+    this.theme.lastElementChild.textContent = 'Light';
     document.body.style.backgroundImage = 'url("./images/lightMode.jpg")';
     document.documentElement.style.setProperty(
       '--components-backgroundLight',
@@ -97,8 +97,8 @@ class Menu extends HTMLElement {
   }
 
   darkTheme() {
-    this.theme.firstElementChild.setAttribute('src', './images/sun.svg');
-    this.theme.lastElementChild.textContent = 'Light';
+    this.theme.firstElementChild.setAttribute('src', './images/moon.svg');
+    this.theme.lastElementChild.textContent = 'Dark';
     document.body.style.backgroundImage = 'url("./images/darkMode.jpg")';
     document.documentElement.style.setProperty(
       '--components-backgroundLight',
