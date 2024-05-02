@@ -51,7 +51,7 @@ menuTemplate.innerHTML = `
 
 <div class="menu">
     <div id="theme"><img src="./images/moon.svg" alt=""><p>Dark</p></div>
-    <div id="tempScale"><img src="./images/thermometer.svg" alt=""><p>Celsius</p></div>
+    <div id="tempScale"><img src="./images/thermometer.svg" alt=""><p>Fahrenheit</p></div>
     <div id="menuLocations"><img src="./images/map-pin.svg" alt="Map pin icon for location settings"><p>Locations</p></div>
 </div>
 `;
@@ -133,13 +133,13 @@ class Menu extends HTMLElement {
 
     menuTempScale.addEventListener('click', (e) => {
       if (menuTempScale.lastElementChild.textContent === 'Celsius') {
-        storage.setStringify('tempScale', ['c', '&deg;C']);
+        storage.setStringify('tempScale', ['f', '&deg;F']);
         menuTempScale.lastElementChild.textContent = 'Fahrenheit';
         currentConditionsComponent.locationLookup(
           currentConditionsComponent.locationInput.value,
         );
       } else {
-        storage.setStringify('tempScale', ['f', '&deg;F']);
+        storage.setStringify('tempScale', ['c', '&deg;C']);
         menuTempScale.lastElementChild.textContent = 'Celsius';
         currentConditionsComponent.locationLookup(
           currentConditionsComponent.locationInput.value,
@@ -152,9 +152,9 @@ class Menu extends HTMLElement {
     }
 
     if (temperatureScale[0] === 'f') {
-      menuTempScale.lastElementChild.textContent = 'Celsius';
-    } else {
       menuTempScale.lastElementChild.textContent = 'Fahrenheit';
+    } else {
+      menuTempScale.lastElementChild.textContent = 'Celsius';
     }
   }
 
