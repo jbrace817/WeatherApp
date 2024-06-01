@@ -198,7 +198,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Project Link: [https://github.com/jbrace817/WeatherApp](https://github.com/jbrace817/WeatherApp)
+Project Link: [https://jbrace817.github.io/WeatherApp/](https://jbrace817.github.io/WeatherApp/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
